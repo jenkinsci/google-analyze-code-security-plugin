@@ -53,7 +53,7 @@ To build and install the plugin from source files, see [Plugin Source Build Inst
 
 
 ## Feature Requests and Bug Reports
-For feature requests and bug reports, file a[GitHub issue](https://github.com/jenkinsci/google-analyze-code-security-plugin/issues).
+For feature requests and bug reports, file a [GitHub issue](https://github.com/jenkinsci/google-analyze-code-security-plugin/issues).
 
 
 ## Community
@@ -64,7 +64,7 @@ To access the Google Cloud community on Jenkins, use the **#gcp-jenkins** Slack 
 
 
 ## License
-See [LICENSE](LICENSE)
+See [LICENSE](LICENSE.md)
 
 
 ## Contributing
