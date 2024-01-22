@@ -1,0 +1,17 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" >
+        <f:entry title="${%Organization ID}" field="orgID">
+            <f:textbox field="orgID" />
+        </f:entry>
+        <f:entry title="${%Security Command Center Credential}" field="credential">
+            <f:secretTextarea field="credential" />
+        </f:entry>
+        <f:validateButton
+                title="${%Test Connection}" progress="${%Testing...}"
+                method="testConnection" with="orgID,credential" />
+    <f:entry title="">
+        <div style="float: left">
+            <f:repeatableDeleteButton />
+        </div>
+    </f:entry>
+</j:jelly>
