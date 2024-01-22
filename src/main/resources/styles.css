@@ -1,0 +1,42 @@
+body {
+    color: rgb(0,0,0);
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 18px;
+    overflow: auto;
+}
+
+.title {
+    text-align: center;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #e7e7e7;
+    width: 100%;
+}
+
+.row--key {
+    min-width: 20%;
+    max-width: 20%;
+    font-weight: bold;
+    white-space: normal;
+    word-break: break-all;
+}
+
+.row--value {
+    white-space: normal;
+    word-break: break-all;
+}
+
+.indent-1 .row--key {
+    padding-left: 24px;
+}
+
+.indent-2 .row--key {
+    padding-left: 48px;
+}

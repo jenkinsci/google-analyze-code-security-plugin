@@ -1,0 +1,46 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" >
+    <f:entry title="${%OrganizationID}" field="orgID" >
+        <f:textbox  value="${orgID}"   field="orgID"/>
+    </f:entry>
+    <f:entry title="${%Scan File Name}" field="scanFileName" >
+        <f:textbox name="scanFileName" value="${scanFileName}"  field="scanFileName"/>
+    </f:entry>
+    <f:entry title="${%Scan File Path[Optional]}"  field="scanFilePath" >
+        <f:textbox  value="${scanFilePath}"  field="scanFilePath"/>
+    </f:entry>
+    <f:entry title="${%Scan Time Out[Millisecond]}" field="scanTimeOut">
+        <f:number  field="scanTimeOut" value="${scanTimeOut}" default="${descriptor.getDefaultScanTimeOut()}"/>
+    </f:entry>
+    <f:entry title="Plugin Failure Configuration" field="failSilentlyOnPluginFailure">
+        <f:checkbox title="${%Fail Silently}" field="failSilentlyOnPluginFailure" default="false"/>
+    </f:entry>
+
+    <f:section title="${%Asset Violation Configuration}">
+        <f:radioBlock name="ignoreAssetViolation" value="false" title="${%Fail Build on Asset Violation}"
+                      checked="${!instance.isIgnoreAssetViolation()}" inline="true">
+            <f:nested>
+                <f:entry title="${%ConfigAggregator}" field="configAggregator">
+                    <table width="100%">
+                        <tr>
+                            <th>
+                                <f:radioBlock name="configAggregator" value="AND" title="${%AND}"
+                                              checked="${instance.isConfigAggregatorAND()}" inline="true"/>
+                            </th>
+                            <th>
+                                <f:radioBlock name="configAggregator" value="OR" title="${%OR}"
+                                              checked="${!instance.isConfigAggregatorAND()}" inline="true"/>
+                            </th>
+                        </tr>
+                    </table>
+                </f:entry>
+                <f:entry title="Violation Configuration" field="assetViolationConfigs">
+                <f:repeatableHeteroProperty field="assetViolationConfigs" hasHeader="true" addCaption="${%Add Asset Violation Condition}"
+                                            deleteCaption="${%Delete Asset Violation Config}" />
+                </f:entry>
+            </f:nested>
+        </f:radioBlock>
+        <f:radioBlock name="ignoreAssetViolation" value="true" title="${%Ignore Asset Violation}"
+                      checked="${instance.isIgnoreAssetViolation()}" inline="true" />
+    </f:section>
+</j:jelly>
