@@ -42,6 +42,5 @@ public class LowSeverityConfig extends AssetViolationConfig {
         public String getDisplayName() {
             return "Low Severity";
         }
-
     }
 }

@@ -18,10 +18,10 @@ package io.jenkins.plugins.google.analyze.code.security.model.IACValidationServi
 
 import hudson.model.BuildListener;
 import hudson.util.Secret;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import java.time.Instant;
 
 /**
  * ValidateIACParams encapsulates request params for `validateIAC` method of {@code  IACValidationService}
@@ -31,13 +31,18 @@ import java.time.Instant;
 public class ValidateIACParams {
     @NonNull
     private final String orgID;
-    private  final byte[] file;
+
+    private final byte[] file;
+
     @NonNull
     private final Secret credentials;
+
     @NonNull
     private final Instant requestReceiveInstant;
+
     @NonNull
     private final Integer pluginTimeoutInMS;
+
     @NonNull
     private final BuildListener listener;
 }

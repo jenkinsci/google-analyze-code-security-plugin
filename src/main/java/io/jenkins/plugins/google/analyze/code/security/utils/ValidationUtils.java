@@ -16,31 +16,30 @@
 
 package io.jenkins.plugins.google.analyze.code.security.utils;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hudson.model.Item;
 import io.jenkins.plugins.google.analyze.code.security.commons.Config;
 import io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage;
-import io.jenkins.plugins.google.analyze.code.security.violationConfig.AssetViolationConfig;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Severity;
 import io.jenkins.plugins.google.analyze.code.security.model.ValidationResponse;
-import jenkins.model.Jenkins;
-import lombok.NonNull;
-import org.apache.commons.lang.StringUtils;
+import io.jenkins.plugins.google.analyze.code.security.violationConfig.AssetViolationConfig;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
+import jenkins.model.Jenkins;
+import lombok.NonNull;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * ValidationUtils provides validation helper methods.
  */
 public final class ValidationUtils {
 
-    private ValidationUtils() {
-    }
+    private ValidationUtils() {}
 
     /***
      * Validates if the JSON is valid.
@@ -92,12 +91,10 @@ public final class ValidationUtils {
      * @param ignoreAssetViolation build step config that determines if violations should be ignored
      * @param assetViolationConfigs threshold configs based on severity.
      */
-    public static ValidationResponse isValidFailureConfig(final Boolean ignoreAssetViolation,
-                                                          final List<AssetViolationConfig> assetViolationConfigs) {
+    public static ValidationResponse isValidFailureConfig(
+            final Boolean ignoreAssetViolation, final List<AssetViolationConfig> assetViolationConfigs) {
         if (ignoreAssetViolation) {
-            return ValidationResponse.builder()
-                    .isValid(true)
-                    .build();
+            return ValidationResponse.builder().isValid(true).build();
         }
         if (assetViolationConfigs == null || assetViolationConfigs.isEmpty()) {
             return ValidationResponse.builder()
@@ -120,13 +117,12 @@ public final class ValidationUtils {
         if (!duplicateConfigs.isEmpty()) {
             return ValidationResponse.builder()
                     .isValid(false)
-                    .errors(List.of(String.format(CustomerMessage.INVALID_SEVERITY_CONFIG,
-                            StringUtils.join(duplicateConfigs,/*separator=*/  ','))))
+                    .errors(List.of(String.format(
+                            CustomerMessage.INVALID_SEVERITY_CONFIG,
+                            StringUtils.join(duplicateConfigs, /*separator=*/ ','))))
                     .build();
         }
-        return ValidationResponse.builder()
-                .isValid(true)
-                .build();
+        return ValidationResponse.builder().isValid(true).build();
     }
 
     /**

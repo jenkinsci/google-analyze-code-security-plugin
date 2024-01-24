@@ -20,8 +20,7 @@ package io.jenkins.plugins.google.analyze.code.security.commons;
  * Config represents tunable configurations across the plugin.
  */
 public final class Config {
-    private Config() {
-    }
+    private Config() {}
 
     public static final Integer SCAN_TIMEOUT_MIN = 60000;
     public static final Integer SCAN_TIMEOUT_MAX = 900000;

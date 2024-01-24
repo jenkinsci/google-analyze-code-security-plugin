@@ -16,11 +16,11 @@
 
 package io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
 /**
  * IaCValidationReport models IaCValidationReport Object present in SCC IAC Scan Validation Response.

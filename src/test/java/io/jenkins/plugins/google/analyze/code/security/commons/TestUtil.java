@@ -22,7 +22,6 @@ import io.jenkins.plugins.google.analyze.code.security.model.IACValidationServic
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.PostureDetails;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Severity;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Violation;
-
 import java.io.File;
 import java.util.List;
 
@@ -31,11 +30,12 @@ import java.util.List;
  */
 public final class TestUtil {
     private TestUtil() {}
+
     public static final String DUMMY_ORG_ID = "777838403257";
-    public static final String DUMMY_VALIDATE_FILE_PATH  = "/dummyValidateFilePath";
+    public static final String DUMMY_VALIDATE_FILE_PATH = "/dummyValidateFilePath";
     public static final String DUMMY_SCAN_START_TIME = "05 01 2024 08:42:00";
     public static final String DUMMY_SCAN_END_TIME = "05 01 2024 08:42:04";
-    public static final FilePath DUMMY_FILE_PATH =  new FilePath(new File("test"));
+    public static final FilePath DUMMY_FILE_PATH = new FilePath(new File("test"));
     public static final List<Violation> DUMMY_VIOLATIONS = List.of(
             Violation.builder()
                     .assetId("storage.googleapis.com/buckets/b1")
@@ -75,6 +75,5 @@ public final class TestUtil {
                     .assetId("storage.googleapis.com/buckets/b3")
                     .policyId("folders/123456/policies/custom.uniformBucketLevelAccess")
                     .severity(Severity.LOW)
-                    .build()
-    );
+                    .build());
 }

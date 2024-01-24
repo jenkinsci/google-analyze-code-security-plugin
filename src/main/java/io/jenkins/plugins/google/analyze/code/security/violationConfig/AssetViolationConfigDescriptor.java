@@ -16,11 +16,11 @@
 
 package io.jenkins.plugins.google.analyze.code.security.violationConfig;
 
+import static io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage.INVALID_VIOLATION_COUNT_CONFIGURATION;
+
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.kohsuke.stapler.QueryParameter;
-
-import static io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage.INVALID_VIOLATION_COUNT_CONFIGURATION;
 
 /**
  * AssetViolationConfigDescriptor is base class for Asset Violation Config Descriptor.

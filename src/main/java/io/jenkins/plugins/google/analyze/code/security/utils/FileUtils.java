@@ -17,30 +17,30 @@
 package io.jenkins.plugins.google.analyze.code.security.utils;
 
 import hudson.FilePath;
-import io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage;
 import io.jenkins.plugins.google.analyze.code.security.CodeScanBuildStep;
+import io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage;
 import io.jenkins.plugins.google.analyze.code.security.model.FileInfo;
-import lombok.NonNull;
-import org.antlr.v4.runtime.misc.Pair;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
+import lombok.NonNull;
+import org.antlr.v4.runtime.misc.Pair;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Utility class for report generation helper methods.
  */
 public final class FileUtils {
 
-    private FileUtils() {
-    }
+    private FileUtils() {}
 
     /**
      *  Finds file in the workspace and reads its contents.
@@ -52,11 +52,13 @@ public final class FileUtils {
      * @throws IOException exception occurred during reading file.
      * @throws InterruptedException thrown when execution thread is interrupted.
      */
-    public static FileInfo loadFileFromWorkspace(@NonNull final FilePath root, @NonNull final String fileName,
-                                                 final String filePath) throws IOException, InterruptedException {
+    public static FileInfo loadFileFromWorkspace(
+            @NonNull final FilePath root, @NonNull final String fileName, final String filePath)
+            throws IOException, InterruptedException {
         if (!StringUtils.isEmpty(filePath)) {
             return FileInfo.builder()
-                    .file(IOUtils.toByteArray(root.child(/*relOrAbsolute=*/ filePath + fileName).read()))
+                    .file(IOUtils.toByteArray(
+                            root.child(/*relOrAbsolute=*/ filePath + fileName).read()))
                     .path(filePath + fileName)
                     .build();
         }
@@ -108,11 +110,9 @@ public final class FileUtils {
      *
      * @throws IOException if failure occurs while reading stream contents.
      */
-    public static String readFromInputStream(final InputStream inputStream)
-            throws IOException {
+    public static String readFromInputStream(final InputStream inputStream) throws IOException {
         final StringBuilder resultStringBuilder = new StringBuilder();
-        try (BufferedReader br
-                     = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line;
             while ((line = br.readLine()) != null) {
                 resultStringBuilder.append(line).append("\n");

@@ -1,5 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" >
+    <f:section>
     <f:entry title="${%OrganizationID}" field="orgID" >
         <f:textbox  value="${orgID}"   field="orgID"/>
     </f:entry>
@@ -15,7 +16,7 @@
     <f:entry title="Plugin Failure Configuration" field="failSilentlyOnPluginFailure">
         <f:checkbox title="${%Fail Silently}" field="failSilentlyOnPluginFailure" default="false"/>
     </f:entry>
-
+    </f:section>
     <f:section title="${%Asset Violation Configuration}">
         <f:radioBlock name="ignoreAssetViolation" value="false" title="${%Fail Build on Asset Violation}"
                       checked="${!instance.isIgnoreAssetViolation()}" inline="true">

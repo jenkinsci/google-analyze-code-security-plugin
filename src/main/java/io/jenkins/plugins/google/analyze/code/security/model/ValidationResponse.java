@@ -16,11 +16,11 @@
 
 package io.jenkins.plugins.google.analyze.code.security.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ValidationResponse encapsulation validation evaluation output.
@@ -30,6 +30,7 @@ import java.util.List;
 public class ValidationResponse {
     @NonNull
     private final Boolean isValid;
+
     @Builder.Default
     private final List<String> errors = new ArrayList<>();
 }

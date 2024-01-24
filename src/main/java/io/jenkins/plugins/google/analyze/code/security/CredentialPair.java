@@ -26,6 +26,7 @@ import hudson.util.Secret;
 import io.jenkins.plugins.google.analyze.code.security.accessor.IACValidationService;
 import io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage;
 import io.jenkins.plugins.google.analyze.code.security.utils.ValidationUtils;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang.StringUtils;
@@ -35,7 +36,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.springframework.security.access.AccessDeniedException;
-import java.io.Serializable;
 
 /**
  * CredentialPair models Credential input from Jenkins UX.
@@ -51,17 +51,17 @@ public class CredentialPair extends AbstractDescribableImpl<CredentialPair> impl
     private Secret credential;
 
     @DataBoundSetter
-    public void setOrgID(String orgID) {
+    public void setOrgID(final String orgID) {
         this.orgID = orgID;
     }
 
     @DataBoundSetter
-    public void setCredential(Secret credential) {
+    public void setCredential(final Secret credential) {
         this.credential = credential;
     }
 
     @DataBoundConstructor
-    public CredentialPair(String orgID, Secret credential) {
+    public CredentialPair(final String orgID, final Secret credential) {
         this.credential = credential;
         this.orgID = orgID;
     }
@@ -94,20 +94,22 @@ public class CredentialPair extends AbstractDescribableImpl<CredentialPair> impl
          */
         @POST
         public FormValidation doTestConnection(
-                @QueryParameter("orgID") final String orgID, @QueryParameter("credential") final Secret credential,
+                @QueryParameter("orgID") final String orgID,
+                @QueryParameter("credential") final Secret credential,
                 @AncestorInPath final Item item) {
             try {
                 ValidationUtils.checkPermissions(item);
                 IACValidationService.getInstance().validateCredentials(orgID, credential);
                 return FormValidation.ok(CustomerMessage.VALID_CREDENTIAL_PAIR);
             } catch (AccessDeniedException ex) {
-                return FormValidation.error(String.format(CustomerMessage.INVALID_CREDENTIAL_INSUFFICIENT_PERMISSION, orgID));
+                return FormValidation.error(
+                        String.format(CustomerMessage.INVALID_CREDENTIAL_INSUFFICIENT_PERMISSION, orgID));
             } catch (IllegalArgumentException ex) {
-                return FormValidation.error(String.format(CustomerMessage.CREDENTIAL_PAIR_VALIDATION_ERROR,
-                        ex.getMessage()));
+                return FormValidation.error(
+                        String.format(CustomerMessage.CREDENTIAL_PAIR_VALIDATION_ERROR, ex.getMessage()));
             } catch (Exception ex) {
-                return FormValidation.error(String.format(CustomerMessage.CREDENTIAL_VALIDATION_INTERNAL_ERROR,
-                        ex.getMessage()));
+                return FormValidation.error(
+                        String.format(CustomerMessage.CREDENTIAL_VALIDATION_INTERNAL_ERROR, ex.getMessage()));
             }
         }
 

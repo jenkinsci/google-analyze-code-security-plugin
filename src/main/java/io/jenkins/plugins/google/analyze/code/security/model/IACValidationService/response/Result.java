@@ -35,6 +35,7 @@ public class Result {
     private String name;
     private String createTime;
     private String updateTime;
+
     @JsonProperty("iacValidationReport")
     private IaCValidationReport validationReport;
 }

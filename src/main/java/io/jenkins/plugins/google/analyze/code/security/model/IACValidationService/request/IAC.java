@@ -29,6 +29,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class IAC {
     private final byte[] file;
+
     @JsonProperty("tf_plan")
     public byte[] getFile() {
         return file;

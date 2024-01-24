@@ -17,7 +17,6 @@
 package io.jenkins.plugins.google.analyze.code.security.utils;
 
 import io.jenkins.plugins.google.analyze.code.security.commons.Config;
-
 import java.time.Instant;
 
 /**
@@ -28,15 +27,15 @@ public final class LogUtils {
     private LogUtils() {}
 
     public static String info(final String message) {
-        return String.format("%s[INFO]%s\n", log(), message);
+        return String.format("%s[INFO]%s%n", log(), message);
     }
 
     public static String warn(final String message) {
-        return String.format("%s[WARN]%s\n", log(), message);
+        return String.format("%s[WARN]%s%n", log(), message);
     }
 
     public static String error(final String message) {
-        return String.format("%s[ERROR]%s\n", log(), message);
+        return String.format("%s[ERROR]%s%n", log(), message);
     }
 
     private static String log() {

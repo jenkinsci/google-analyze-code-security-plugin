@@ -17,10 +17,10 @@
 package io.jenkins.plugins.google.analyze.code.security.model;
 
 import hudson.FilePath;
+import java.util.Map;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import java.util.Map;
 
 /**
  * ReportBuildRequest encapsulates arguments for building report request.
@@ -29,14 +29,19 @@ import java.util.Map;
 @SuperBuilder
 public class ReportBuildRequest {
     private String validationFilePath;
+
     @NonNull
     private FilePath workspacePath;
+
     @NonNull
     private String reportWritePath;
+
     @NonNull
     private String scanStartTime;
+
     @NonNull
     private String scanEndTime;
+
     @NonNull
     private Map<String, String> workspaceContents;
 }
