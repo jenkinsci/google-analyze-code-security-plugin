@@ -17,10 +17,10 @@
 package io.jenkins.plugins.google.analyze.code.security.model;
 
 import io.jenkins.plugins.google.analyze.code.security.violationConfig.AssetViolationConfig;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import java.util.List;
 
 /**
  * PluginConfig encapsulates plugin config arguments.
@@ -30,14 +30,19 @@ import java.util.List;
 public class PluginConfig {
     private final String orgID;
     private final String scanFileName;
+
     @NonNull
     private final Integer scanTimeOut;
+
     @NonNull
     private final Boolean ignoreAssetViolation;
+
     @NonNull
     private final Boolean failSilentlyOnPluginFailure;
+
     private final String filePath;
     private final List<AssetViolationConfig> assetViolationConfigs;
+
     @NonNull
     private final ConfigAggregator configAggregator;
 }

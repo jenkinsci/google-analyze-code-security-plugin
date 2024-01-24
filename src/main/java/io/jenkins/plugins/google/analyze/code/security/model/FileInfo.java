@@ -26,7 +26,8 @@ import lombok.NonNull;
 @Data
 @Builder
 public class FileInfo {
-    private  final byte[] file;
+    private final byte[] file;
+
     @NonNull
     private final String path;
 }

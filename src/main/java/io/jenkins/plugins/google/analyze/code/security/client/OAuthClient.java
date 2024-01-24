@@ -16,14 +16,14 @@
 
 package io.jenkins.plugins.google.analyze.code.security.client;
 
+import static io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage.MALFORMED_SCC_CREDENTIAL;
+
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
-import lombok.NonNull;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-
-import static io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage.MALFORMED_SCC_CREDENTIAL;
+import lombok.NonNull;
 
 /**
  * OAuthClient provides Client for managing OAuth token lifecycle.
@@ -42,8 +42,7 @@ public class OAuthClient {
         return instance;
     }
 
-    private OAuthClient() {
-    }
+    private OAuthClient() {}
 
     /**
      * Generates OAuth access token with the help of GCP Service Account Credentials.

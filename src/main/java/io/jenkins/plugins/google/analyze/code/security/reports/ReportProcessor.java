@@ -16,17 +16,16 @@
 
 package io.jenkins.plugins.google.analyze.code.security.reports;
 
+import static io.jenkins.plugins.google.analyze.code.security.utils.FileUtils.readResource;
+
 import hudson.FilePath;
 import hudson.model.BuildListener;
 import io.jenkins.plugins.google.analyze.code.security.commons.ReportConstants;
 import io.jenkins.plugins.google.analyze.code.security.model.ReportBuildRequest;
 import io.jenkins.plugins.google.analyze.code.security.utils.LogUtils;
-import lombok.NonNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-
-import static io.jenkins.plugins.google.analyze.code.security.utils.FileUtils.readResource;
 
 /**
  * Base Class for Report Processor.
@@ -37,21 +36,24 @@ import static io.jenkins.plugins.google.analyze.code.security.utils.FileUtils.re
  * @param <T>
  */
 public abstract class ReportProcessor<T extends ReportBuildRequest> {
-    public void processReport(@NonNull final T buildReportRequest, @NonNull final BuildListener listener) {
+    public void processReport(final T buildReportRequest, final BuildListener listener) {
         try {
             final Map<String, String> workspaceContents = buildReportRequest.getWorkspaceContents();
             final String report = generateReport(buildReportRequest);
-            publishArtifact(report, buildReportRequest.getWorkspacePath() + buildReportRequest.getReportWritePath(),
+            publishArtifact(
+                    report,
+                    buildReportRequest.getWorkspacePath() + buildReportRequest.getReportWritePath(),
                     buildReportRequest.getWorkspacePath());
             workspaceContents.put(buildReportRequest.getReportWritePath(), buildReportRequest.getReportWritePath());
             // write style to workspace dir
-            publishArtifact(readResource(ReportConstants.STYLES_CSS_PATH),
+            publishArtifact(
+                    readResource(ReportConstants.STYLES_CSS_PATH),
                     /*path=*/ buildReportRequest.getWorkspacePath() + ReportConstants.STYLES_CSS_PATH,
                     buildReportRequest.getWorkspacePath());
             workspaceContents.put(ReportConstants.STYLES_CSS_PATH, ReportConstants.STYLES_CSS_PATH);
         } catch (Exception ex) {
-            listener.getLogger().printf(LogUtils.error("[Internal Error] Received Error while generating report : [%s]"),
-                    ex);
+            listener.getLogger()
+                    .printf(LogUtils.error("[Internal Error] Received Error while generating report : [%s]"), ex);
         }
     }
 

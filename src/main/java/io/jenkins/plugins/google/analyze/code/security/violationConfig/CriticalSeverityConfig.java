@@ -42,6 +42,5 @@ public class CriticalSeverityConfig extends AssetViolationConfig {
         public String getDisplayName() {
             return "Critical Severity";
         }
-
     }
 }

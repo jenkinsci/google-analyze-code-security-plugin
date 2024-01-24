@@ -17,9 +17,9 @@
 package io.jenkins.plugins.google.analyze.code.security.accessor;
 
 import com.google.api.client.util.ExponentialBackOff;
+import java.io.IOException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
-import java.io.IOException;
 
 /**
  * ExponentialBackoffRetryHandler provides implementation for Backoff Retry Strategy.
@@ -68,8 +68,11 @@ public class ExponentialBackoffRetryHandler implements HttpRequestRetryHandler {
      * @return instance of {@link ExponentialBackoffRetryHandler}
      */
     public static ExponentialBackoffRetryHandler getDefault(final int maxRetryCount) {
-        return new ExponentialBackoffRetryHandler(maxRetryCount, ExponentialBackOff.DEFAULT_MULTIPLIER,
-                ExponentialBackOff.DEFAULT_INITIAL_INTERVAL_MILLIS, ExponentialBackOff.DEFAULT_MAX_INTERVAL_MILLIS);
+        return new ExponentialBackoffRetryHandler(
+                maxRetryCount,
+                ExponentialBackOff.DEFAULT_MULTIPLIER,
+                ExponentialBackOff.DEFAULT_INITIAL_INTERVAL_MILLIS,
+                ExponentialBackOff.DEFAULT_MAX_INTERVAL_MILLIS);
     }
 
     private void addDelay(final long delay) {

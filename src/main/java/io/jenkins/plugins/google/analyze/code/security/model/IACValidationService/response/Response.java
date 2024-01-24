@@ -35,10 +35,14 @@ import lombok.NonNull;
 public class Response {
     @NonNull
     private final String name;
+
     @NonNull
     private final Boolean done;
+
     private final OperationMetadata metadata;
+
     @JsonProperty("response")
     private final Result result;
+
     private Error error;
 }

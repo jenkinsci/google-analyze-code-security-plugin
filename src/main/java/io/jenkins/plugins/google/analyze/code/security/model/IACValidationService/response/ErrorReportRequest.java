@@ -34,6 +34,7 @@ import lombok.experimental.SuperBuilder;
 public class ErrorReportRequest extends ReportBuildRequest {
     private String error;
     private String errorCode;
+
     @NonNull
     private PluginConfig pluginConfig;
 }

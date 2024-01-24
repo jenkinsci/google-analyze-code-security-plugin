@@ -16,26 +16,26 @@
 
 package io.jenkins.plugins.google.analyze.code.security.reports;
 
-import io.jenkins.plugins.google.analyze.code.security.commons.ReportConstants;
-import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IACScanReportRequest;
-import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Violation;
-import io.jenkins.plugins.google.analyze.code.security.utils.FileUtils;
-import io.jenkins.plugins.google.analyze.code.security.commons.TestUtil;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_FILE_PATH;
 import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_SCAN_END_TIME;
 import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_SCAN_START_TIME;
 import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_VIOLATIONS;
 import static org.junit.Assert.assertEquals;
+
+import io.jenkins.plugins.google.analyze.code.security.commons.ReportConstants;
+import io.jenkins.plugins.google.analyze.code.security.commons.TestUtil;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IACScanReportRequest;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Violation;
+import io.jenkins.plugins.google.analyze.code.security.utils.FileUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * IACScanReportProcessorTest for {@link IACScanReportProcessor}
@@ -53,16 +53,20 @@ public class IACScanReportProcessorTest {
     public void generateReport_nonEmptyViolations_reportMatchSuccess() throws IOException {
         final String report = iacScanReportProcessor.generateReport(buildIACScanReportRequest(DUMMY_VIOLATIONS));
 
-        Assert.assertEquals(FileUtils.readFromInputStream(getClass()
-                .getResourceAsStream(/*name=*/ "/iacScanReportNonEmptyViolation.html")), /*actual=*/ report+"\n");
+        Assert.assertEquals(
+                FileUtils.readFromInputStream(
+                        getClass().getResourceAsStream(/*name=*/ "/iacScanReportNonEmptyViolation.html")),
+                /*actual=*/ report + "\n");
     }
 
     @Test
     public void generateReport_EmptyViolations_reportMatchSuccess() throws IOException {
         final String report = iacScanReportProcessor.generateReport(buildIACScanReportRequest(new ArrayList<>()));
 
-        assertEquals(FileUtils.readFromInputStream(getClass()
-                .getResourceAsStream(/*name=*/ "/iacScanReportEmptyViolation.html")), /*actual=*/ report+"\n");
+        assertEquals(
+                FileUtils.readFromInputStream(
+                        getClass().getResourceAsStream(/*name=*/ "/iacScanReportEmptyViolation.html")),
+                /*actual=*/ report + "\n");
     }
 
     private IACScanReportRequest buildIACScanReportRequest(final List<Violation> violations) {

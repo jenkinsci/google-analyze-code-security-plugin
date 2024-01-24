@@ -16,25 +16,24 @@
 
 package io.jenkins.plugins.google.analyze.code.security.utils;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
 import io.jenkins.plugins.google.analyze.code.security.commons.ReportConstants;
 import io.jenkins.plugins.google.analyze.code.security.model.HTMLIndent;
-import org.apache.commons.lang.StringUtils;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.apache.commons.lang.StringUtils.isBlank;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * ReportUtils provides utility methods for building report.
  */
 public final class ReportUtils {
 
-    private ReportUtils() {
-    }
+    private ReportUtils() {}
 
     /**
      * Returns HTML formatted Div Block.
@@ -49,14 +48,14 @@ public final class ReportUtils {
      * @param key key attribute in the div.
      * @param value value attribute in the div.
      */
-    public static String buildHTMLDivWithKeyAndOptionalValueEntry(final HTMLIndent indent, final String key,
-                                                                  final String value) {
+    public static String buildHTMLDivWithKeyAndOptionalValueEntry(
+            final HTMLIndent indent, final String key, final String value) {
         if (isBlank(key)) {
             return StringUtils.EMPTY;
         }
         List<String> content = new ArrayList<>();
-        content.add(ReportConstants.INDENT_CLASS_DIV.replace("$INDENT_LEVEL_PLACEHOLDER$",
-                indent.getIndent().toString()));
+        content.add(ReportConstants.INDENT_CLASS_DIV.replace(
+                "$INDENT_LEVEL_PLACEHOLDER$", indent.getIndent().toString()));
         content.add(ReportConstants.KEY_CLASS_DIV.replace(/*target=*/ "$KEY_PLACEHOLDER$", key));
 
         if (!isBlank(value)) {
@@ -80,7 +79,7 @@ public final class ReportUtils {
      * @param value value attribute in the div.
      */
     public static String buildHTMLDivWithKeyValueEntry(final HTMLIndent indent, final String key, final String value) {
-        if(isBlank(value)) {
+        if (isBlank(value)) {
             return StringUtils.EMPTY;
         }
         return buildHTMLDivWithKeyAndOptionalValueEntry(indent, key, value);
@@ -92,8 +91,8 @@ public final class ReportUtils {
      * @param instant instantaneous point on the time-line.
      */
     public static String getDateFromInstant(final Instant instant) {
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy HH:mm:ss")
-                .withZone(ZoneId.from(ZoneOffset.UTC));
+        final DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("dd MM yyyy HH:mm:ss").withZone(ZoneId.from(ZoneOffset.UTC));
         return formatter.format(instant);
     }
 }

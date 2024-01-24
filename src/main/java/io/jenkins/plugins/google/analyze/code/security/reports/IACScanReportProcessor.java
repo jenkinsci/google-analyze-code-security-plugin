@@ -25,7 +25,6 @@ import io.jenkins.plugins.google.analyze.code.security.model.IACValidationServic
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Severity;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Violation;
 import io.jenkins.plugins.google.analyze.code.security.utils.ReportUtils;
-import org.apache.commons.lang.StringUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * IACScanReportProcessor generates and publishes IAC Scan Violation Summary.
@@ -46,7 +46,7 @@ import java.util.TreeMap;
  * </p>
  */
 public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest> {
-    public static IACScanReportProcessor instance;
+    static IACScanReportProcessor instance;
 
     /**
      * Returns an instance of {@link IACScanReportProcessor}
@@ -58,8 +58,7 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
         return instance;
     }
 
-    private IACScanReportProcessor() {
-    }
+    private IACScanReportProcessor() {}
 
     /**
      * Generate an HTML Report encapsulating violation details.
@@ -74,22 +73,22 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
 
         content.add(ReportConstants.REPORT_OPEN_HTML.replace("$REPORT_TITLE$", Config.SCAN_SUMMARY_REPORT_TITLE));
 
-        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, /*key=*/ "Validated file:",
-                iacScanReportRequest.getValidationFilePath()));
-        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, /*key=*/ "Start Time(UTC):",
-                iacScanReportRequest.getScanStartTime()));
-        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, /*key=*/ "End Time(UTC):",
-                iacScanReportRequest.getScanEndTime()));
+        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                HTMLIndent.ZERO, /*key=*/ "Validated file:", iacScanReportRequest.getValidationFilePath()));
+        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                HTMLIndent.ZERO, /*key=*/ "Start Time(UTC):", iacScanReportRequest.getScanStartTime()));
+        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                HTMLIndent.ZERO, /*key=*/ "End Time(UTC):", iacScanReportRequest.getScanEndTime()));
 
         if (violations.isEmpty()) {
-            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, /*key=*/ "Summary:",
-                    /*value=*/ "No issues found"));
+            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                    HTMLIndent.ZERO, /*key=*/ "Summary:", /*value=*/ "No issues found"));
             content.add(ReportConstants.REPORT_CLOSE_HTML);
             content.removeIf(String::isEmpty);
-            return StringUtils.join(content,/*separator=*/ "\n");
+            return StringUtils.join(content, /*separator=*/ "\n");
         }
-        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, /*key=*/ "Summary:",
-                /*value=*/ violations.size() + " issues found"));
+        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                HTMLIndent.ZERO, /*key=*/ "Summary:", /*value=*/ violations.size() + " issues found"));
         addViolationInfo(violations, content);
         content.add(ReportConstants.REPORT_CLOSE_HTML);
         content.removeIf(String::isEmpty);
@@ -109,18 +108,22 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
             violationsPerPolicy.get(violation.getPolicyId()).add(violation);
         });
         final List<String> issueCountBySeverity = new ArrayList<>();
-        uniquePoliciesBySeverity.forEach((severity, policies) -> issueCountBySeverity.add(String.format("%s : %s",
-                severity.name(), getViolationCount(policies, violationsPerPolicy))));
-        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, /*key=*/ "Issues by Severity",
+        uniquePoliciesBySeverity.forEach((severity, policies) -> issueCountBySeverity.add(
+                String.format("%s : %s", severity.name(), getViolationCount(policies, violationsPerPolicy))));
+        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                HTMLIndent.ZERO,
+                /*key=*/ "Issues by Severity",
                 StringUtils.join(issueCountBySeverity, /*separator=*/ " ")));
         extractViolationDetails(content, violationsPerPolicy, uniquePoliciesBySeverity);
     }
 
-    private void extractViolationDetails(final List<String> content, final Map<String, List<Violation>> violationsPerPolicy,
-                                         final Map<Severity, Set<String>> uniquePoliciesBySeverity) {
+    private void extractViolationDetails(
+            final List<String> content,
+            final Map<String, List<Violation>> violationsPerPolicy,
+            final Map<Severity, Set<String>> uniquePoliciesBySeverity) {
         uniquePoliciesBySeverity.forEach((severity, policies) -> {
-            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, severity.name(),
-                    StringUtils.EMPTY));
+            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                    HTMLIndent.ZERO, severity.name(), StringUtils.EMPTY));
             policies.forEach((policy) -> {
                 if (violationsPerPolicy.get(policy).isEmpty()) {
                     return;
@@ -128,63 +131,71 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
                 addViolatedPolicyInfo(content, violationsPerPolicy.get(policy).get(0));
                 addAssetDetails(content, violationsPerPolicy, policy);
             });
-
         });
     }
 
-    private Integer getViolationCount(final Set<String> policies,
-                                      final Map<String, List<Violation>> violationsPerPolicy) {
+    private Integer getViolationCount(
+            final Set<String> policies, final Map<String, List<Violation>> violationsPerPolicy) {
         return policies.stream()
                 .map(policy -> violationsPerPolicy.get(policy).size())
-                .reduce(Integer::sum).orElse(/*other=*/ 0);
+                .reduce(Integer::sum)
+                .orElse(/*other=*/ 0);
     }
 
     private void addViolatedPolicyInfo(final List<String> content, final Violation violatedPolicyInfo) {
-        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.SINGLE, /*key=*/ "Policy ID",
-                violatedPolicyInfo.getPolicyId()));
+        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Policy ID", violatedPolicyInfo.getPolicyId()));
         if (violatedPolicyInfo.getViolatedPosture() != null) {
             addPostureDetails(content, violatedPolicyInfo.getViolatedPosture());
         }
         if (violatedPolicyInfo.getViolatedPolicy() != null) {
             addPolicyDetails(content, violatedPolicyInfo.getViolatedPolicy());
         }
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "NextSteps",
-                violatedPolicyInfo.getNextSteps()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Next Steps", violatedPolicyInfo.getNextSteps()));
     }
 
     private void addPostureDetails(final List<String> content, final PostureDetails violatedPosture) {
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Posture Deployment ID",
-                violatedPosture.getPostureDeployment()));
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Posture Deployed at",
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Posture Deployment ID", violatedPosture.getPostureDeployment()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE,
+                /*key=*/ "Posture Deployment Location",
                 violatedPosture.getPostureDeploymentTargetResource()));
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Posture",
-                violatedPosture.getPosture()));
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Posture Revision Id",
-                violatedPosture.getPostureRevisionId()));
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Policy Set",
-                violatedPosture.getPolicySet()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Posture", violatedPosture.getPosture()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Posture Revision ID", violatedPosture.getPostureRevisionId()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Policy Set", violatedPosture.getPolicySet()));
     }
 
     private void addPolicyDetails(final List<String> content, final PolicyDetails violatedPolicy) {
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Constraint",
-                violatedPolicy.getConstraint()));
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Policy Type",
-                violatedPolicy.getConstraintType()));
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Compliance Standards",
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Constraint", violatedPolicy.getConstraint()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Policy Type", violatedPolicy.getConstraintType()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE,
+                /*key=*/ "Compliance Standards",
                 StringUtils.join(violatedPolicy.getComplianceStandards(), ", ")));
-        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.SINGLE, /*key=*/ "Description",
-                violatedPolicy.getDescription()));
+        content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                HTMLIndent.SINGLE, /*key=*/ "Description", violatedPolicy.getDescription()));
     }
 
-    private void addAssetDetails(final List<String> content, Map<String, List<Violation>> violationsPerPolicy,
-                                 final String policy) {
+    private void addAssetDetails(
+            final List<String> content, Map<String, List<Violation>> violationsPerPolicy, final String policy) {
         violationsPerPolicy.get(policy).forEach(violation -> {
-            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.SINGLE, /*key=*/ "Asset ID",
-                    violation.getAssetId()));
+            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
+                    HTMLIndent.SINGLE, /*key=*/ "Asset ID", violation.getAssetId()));
             if (violation.getViolatedAsset() != null) {
-                content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.DOUBLE, /*key=*/ "Asset",
+                content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                        HTMLIndent.DOUBLE,
+                        /*key=*/ "Asset",
                         violation.getViolatedAsset().getAsset()));
-                content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(HTMLIndent.DOUBLE, /*key=*/ "Asset Type",
+                content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
+                        HTMLIndent.DOUBLE,
+                        /*key=*/ "Asset Type",
                         violation.getViolatedAsset().getAssetType()));
             }
         });

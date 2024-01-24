@@ -18,6 +18,8 @@ package io.jenkins.plugins.google.analyze.code.security.client;
 
 import io.jenkins.plugins.google.analyze.code.security.accessor.ExponentialBackoffRetryHandler;
 import io.jenkins.plugins.google.analyze.code.security.commons.Config;
+import java.io.IOException;
+import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -29,16 +31,18 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * HttpClient provides Client Object for Http Based communication.
  */
 public class HttpClient {
-    public final static List<Integer> RETRIABLE_ERROR_CODES = List.of(HttpStatus.SC_REQUEST_TIMEOUT,
-            HttpStatus.SC_TOO_MANY_REQUESTS, HttpStatus.SC_INTERNAL_SERVER_ERROR, HttpStatus.SC_BAD_GATEWAY,
-            HttpStatus.SC_SERVICE_UNAVAILABLE, HttpStatus.SC_GATEWAY_TIMEOUT);
+    public static final List<Integer> RETRIABLE_ERROR_CODES = List.of(
+            HttpStatus.SC_REQUEST_TIMEOUT,
+            HttpStatus.SC_TOO_MANY_REQUESTS,
+            HttpStatus.SC_INTERNAL_SERVER_ERROR,
+            HttpStatus.SC_BAD_GATEWAY,
+            HttpStatus.SC_SERVICE_UNAVAILABLE,
+            HttpStatus.SC_GATEWAY_TIMEOUT);
     private static HttpClient instance;
 
     /**
@@ -51,8 +55,7 @@ public class HttpClient {
         return instance;
     }
 
-    private HttpClient() {
-    }
+    private HttpClient() {}
 
     /**
      * Returns HttpClientBuilder instance.
@@ -64,7 +67,8 @@ public class HttpClient {
                 .addInterceptorLast((HttpResponse response, HttpContext context) -> {
                     StatusLine statusLine = response.getStatusLine();
                     if (RETRIABLE_ERROR_CODES.contains(statusLine.getStatusCode())) {
-                        throw new IOException(String.format("Received Exception with status code : [%s] & reason : [%s]",
+                        throw new IOException(String.format(
+                                "Received Exception with status code : [%s] & reason : [%s]",
                                 statusLine.getStatusCode(), statusLine.getReasonPhrase()));
                     }
                 })

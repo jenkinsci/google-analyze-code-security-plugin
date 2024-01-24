@@ -36,8 +36,8 @@ public class IACValidationException extends RuntimeException {
         this.statusCode = statusCode;
     }
 
-    public IACValidationException(@NonNull final Integer statusCode, @NonNull final String message,
-                                  @NonNull final Throwable cause) {
+    public IACValidationException(
+            @NonNull final Integer statusCode, @NonNull final String message, @NonNull final Throwable cause) {
         super(message, cause);
         this.statusCode = statusCode;
     }

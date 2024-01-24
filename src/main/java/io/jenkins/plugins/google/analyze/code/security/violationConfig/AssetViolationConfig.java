@@ -19,11 +19,11 @@ package io.jenkins.plugins.google.analyze.code.security.violationConfig;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Severity;
+import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.kohsuke.stapler.DataBoundSetter;
-import java.io.Serializable;
 
 /**
  * AssetViolationConfig is base class for violation configs of different severity classes.
@@ -44,7 +44,7 @@ public abstract class AssetViolationConfig extends AbstractDescribableImpl<Asset
     }
 
     @DataBoundSetter
-    public void setCount(int count) {
+    public void setCount(final int count) {
         this.count = count;
     }
 }

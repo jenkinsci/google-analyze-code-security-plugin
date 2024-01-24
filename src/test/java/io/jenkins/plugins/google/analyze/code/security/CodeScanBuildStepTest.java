@@ -16,6 +16,8 @@
 
 package io.jenkins.plugins.google.analyze.code.security;
 
+import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_ORG_ID;
+
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
@@ -30,6 +32,9 @@ import io.jenkins.plugins.google.analyze.code.security.model.ConfigAggregator;
 import io.jenkins.plugins.google.analyze.code.security.violationConfig.AssetViolationConfig;
 import io.jenkins.plugins.google.analyze.code.security.violationConfig.CriticalSeverityConfig;
 import io.jenkins.plugins.google.analyze.code.security.violationConfig.HighSeverityConfig;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,11 +42,6 @@ import org.junit.runner.RunWith;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.TestBuilder;
 import org.mockito.junit.MockitoJUnitRunner;
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-
-import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_ORG_ID;
 
 /**
  * End-to-End Test for {@link CodeScanBuildStep}.
@@ -65,43 +65,49 @@ public class CodeScanBuildStepTest {
     // Please add service account credentials before invoking the E2E test.
     private static final String DUMMY_VALID_SCC_CREDENTIAL = "";
 
-    private static final String DUMMY_MALFORMED_SCC_CREDENTIALS = "{\n" +
-            "  \"type\": \"service_account\",\n" +
-            "  \"project_id\": \"dummy-project\",\n" +
-            "  \"private_key_id\": \"dummy\",\n" +
-            "  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\"+
-            "\\n-----END PRIVATE KEY-----\\n\",\n" +
-            "  \"client_email\": \"random\",\n" +
-            "  \"client_id\": \"random\",\n" +
-            "  \"auth_uri\": \"random\",\n" +
-            "  \"token_uri\": \"random\",\n" +
-            "  \"auth_provider_x509_cert_url\": \"random\",\n" +
-            "  \"client_x509_cert_url\": \"random\",\n" +
-            "  \"universe_domain\": \"googleapis.com\"\n" +
-            "}";
+    private static final String DUMMY_MALFORMED_SCC_CREDENTIALS = "{\n" + "  \"type\": \"service_account\",\n"
+            + "  \"project_id\": \"dummy-project\",\n"
+            + "  \"private_key_id\": \"dummy\",\n"
+            + "  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\"
+            + "\\n-----END PRIVATE KEY-----\\n\",\n"
+            + "  \"client_email\": \"random\",\n"
+            + "  \"client_id\": \"random\",\n"
+            + "  \"auth_uri\": \"random\",\n"
+            + "  \"token_uri\": \"random\",\n"
+            + "  \"auth_provider_x509_cert_url\": \"random\",\n"
+            + "  \"client_x509_cert_url\": \"random\",\n"
+            + "  \"universe_domain\": \"googleapis.com\"\n"
+            + "}";
 
     @Rule
     public final JenkinsRule jenkinsRule = new JenkinsRule();
 
     @Before
-    public void setup() {
-    }
+    public void setup() {}
 
     @Test
-    public void codeScanBuildStep_scanFileWithVulnerabilitiesIgnoreAssetViolationFalse_SCCReturnsCriticalViolationsBuildStatusFail()
-            throws Exception {
+    public void
+            codeScanBuildStep_scanFileWithVulnerabilitiesIgnoreAssetViolationFalse_SCCReturnsCriticalViolationsBuildStatusFail()
+                    throws Exception {
         // skip test if credentials are not found.
         if (DUMMY_VALID_SCC_CREDENTIAL.isBlank()) {
             return;
         }
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_ORG_ID,
-                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_FALSE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_ORG_ID,
+                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
@@ -110,31 +116,42 @@ public class CodeScanBuildStepTest {
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched SCC Credentials", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched Scan file", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Requesting Validation Service Polling Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Validation Service Polling Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Polling Validation Service Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Response from Validation Service Endpoint", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "Successfully scanned file at the location : " +
-                "[test0/planWithVulnerabilities.json], found : [3] violations", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "Successfully scanned file at the location : "
+                        + "[test0/planWithVulnerabilities.json], found : [3] violations",
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published violation summary", build);
     }
 
     @Test
-    public void codeScanBuildStep_scanFileWithVulnerabilitiesIgnoreAssetViolationTrue_SCCReturnsCriticalViolationsBuildStatusSuccess()
-            throws Exception {
+    public void
+            codeScanBuildStep_scanFileWithVulnerabilitiesIgnoreAssetViolationTrue_SCCReturnsCriticalViolationsBuildStatusSuccess()
+                    throws Exception {
         // skip test if credentials are not found.
         if (DUMMY_VALID_SCC_CREDENTIAL.isBlank()) {
             return;
         }
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_ORG_ID,
-                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_TRUE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_ORG_ID,
+                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_TRUE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
@@ -143,13 +160,16 @@ public class CodeScanBuildStepTest {
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched SCC Credentials", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched Scan file", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Requesting Validation Service Polling Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Validation Service Polling Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Polling Validation Service Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Response from Validation Service Endpoint", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "Successfully scanned file at the location : " +
-                "[test0/planWithVulnerabilities.json], found : [3] violations", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "Successfully scanned file at the location : "
+                        + "[test0/planWithVulnerabilities.json], found : [3] violations",
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published violation summary", build);
     }
 
@@ -162,12 +182,19 @@ public class CodeScanBuildStepTest {
         }
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_ORG_ID,
-                DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_FALSE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_ORG_ID,
+                DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
@@ -176,35 +203,50 @@ public class CodeScanBuildStepTest {
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched SCC Credentials", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched Scan file", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Requesting Validation Service Polling Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Validation Service Polling Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Polling Validation Service Endpoint", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Response from Validation Service Endpoint", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "Successfully scanned file at the location : " +
-                "[test0/planWithoutVulnerabilities.json], found : [0] violations", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "Successfully scanned file at the location : "
+                        + "[test0/planWithoutVulnerabilities.json], found : [0] violations",
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published violation summary", build);
     }
 
     @Test
     public void codeScanBuildStep_invalidConfigMultipleErrorsFailSilentlyFalse_failedBuildStatus() throws Exception {
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_INVALID_ORG_ID, StringUtils.EMPTY,
-                /*filePath=*/ null, (Config.SCAN_TIMEOUT_MIN - 10), FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
-                IGNORE_ASSET_VIOLATION_FALSE, List.of(new HighSeverityConfig(/*count=*/ 1),
-                new HighSeverityConfig(/*count=*/ 2)), ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_INVALID_ORG_ID,
+                StringUtils.EMPTY,
+                /*filePath=*/ null,
+                (Config.SCAN_TIMEOUT_MIN - 10),
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                List.of(new HighSeverityConfig(/*count=*/ 1), new HighSeverityConfig(/*count=*/ 2)),
+                ConfigAggregator.OR);
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
 
         jenkinsRule.assertBuildStatus(Result.FAILURE, build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
-        jenkinsRule.assertLogContains(String.format("[ERROR]Execution failed with following error : " +
-                        "[java.lang.IllegalArgumentException: [Invalid Config] Violations : [%s, %s, %s, %s]]",
-                CustomerMessage.INVALID_ORG_ID, CustomerMessage.INVALID_SCAN_FILE_NAME, CustomerMessage.INVALID_SCAN_TIMEOUT,
-                String.format(CustomerMessage.INVALID_SEVERITY_CONFIG, "HIGH")), build);
+        jenkinsRule.assertLogContains(
+                String.format(
+                        "[ERROR]Execution failed with following error : "
+                                + "[java.lang.IllegalArgumentException: [Invalid Config] Violations : [%s, %s, %s, %s]]",
+                        CustomerMessage.INVALID_ORG_ID,
+                        CustomerMessage.INVALID_SCAN_FILE_NAME,
+                        CustomerMessage.INVALID_SCAN_TIMEOUT,
+                        String.format(CustomerMessage.INVALID_SEVERITY_CONFIG, "HIGH")),
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published plugin error report", build);
     }
 
@@ -212,41 +254,61 @@ public class CodeScanBuildStepTest {
     public void codeScanBuildStep_invalidOrgIDFailSilentlyTrue_SuccessBuildStatus() throws Exception {
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_INVALID_ORG_ID,
-                DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                /*failSilentlyOnPluginFailure=*/ true, IGNORE_ASSET_VIOLATION_FALSE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_INVALID_ORG_ID,
+                DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                /*failSilentlyOnPluginFailure=*/ true,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
 
         jenkinsRule.assertBuildStatusSuccess(build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
-        jenkinsRule.assertLogContains(String.format("[ERROR]Execution failed with following error : " +
-                        "[java.lang.IllegalArgumentException: [Invalid Config] Violations : [%s]]",
-                CustomerMessage.INVALID_ORG_ID), build);
+        jenkinsRule.assertLogContains(
+                String.format(
+                        "[ERROR]Execution failed with following error : "
+                                + "[java.lang.IllegalArgumentException: [Invalid Config] Violations : [%s]]",
+                        CustomerMessage.INVALID_ORG_ID),
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published plugin error report", build);
     }
 
     @Test
     public void codeScanBuildStep_scanFileNotFound_failedBuildStatus() throws Exception {
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_ORG_ID,
-                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_FALSE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_ORG_ID,
+                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
 
         jenkinsRule.assertBuildStatus(Result.FAILURE, build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
-        jenkinsRule.assertLogContains(String.format("[ERROR]Execution failed with following error : " +
-                "[java.lang.IllegalArgumentException: %s]", CustomerMessage.FILE_NOT_FOUND), build);
+        jenkinsRule.assertLogContains(
+                String.format(
+                        "[ERROR]Execution failed with following error : " + "[java.lang.IllegalArgumentException: %s]",
+                        CustomerMessage.FILE_NOT_FOUND),
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published plugin error report", build);
     }
 
@@ -254,9 +316,13 @@ public class CodeScanBuildStepTest {
     public void codeScanBuildStep_credentialsNotFound_failedBuildStatus() throws Exception {
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_ORG_ID,
-                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_FALSE,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_ORG_ID,
+                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
                 List.of(new CriticalSeverityConfig(/*count=*/ 1), new HighSeverityConfig(/*count=*/ 1)),
                 ConfigAggregator.OR);
         p.getBuildersList().add(codeScanBuildStep);
@@ -265,9 +331,12 @@ public class CodeScanBuildStepTest {
 
         jenkinsRule.assertBuildStatus(Result.FAILURE, build);
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
-        jenkinsRule.assertLogContains(String.format("[ERROR]Execution failed with following error : " +
-                        "[java.lang.IllegalArgumentException: [Invalid Request] Violations : [%s]]",
-                String.format(CustomerMessage.CREDENTIAL_NOT_FOUND, DUMMY_ORG_ID)), build);
+        jenkinsRule.assertLogContains(
+                String.format(
+                        "[ERROR]Execution failed with following error : "
+                                + "[java.lang.IllegalArgumentException: [Invalid Request] Violations : [%s]]",
+                        String.format(CustomerMessage.CREDENTIAL_NOT_FOUND, DUMMY_ORG_ID)),
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published plugin error report", build);
     }
 
@@ -275,12 +344,19 @@ public class CodeScanBuildStepTest {
     public void codeScanBuildStep_malformedCredentials_failedBuildStatus() throws Exception {
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_ORG_ID,
-                DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_FALSE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_ORG_ID,
+                DUMMY_SCAN_FILE_WITHOUT_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_MALFORMED_SCC_CREDENTIALS))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_MALFORMED_SCC_CREDENTIALS))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
@@ -289,11 +365,15 @@ public class CodeScanBuildStepTest {
         jenkinsRule.assertLogContains(/*substring=*/ "Received Code Scan Request", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched SCC Credentials", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched Scan file", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
-        jenkinsRule.assertLogContains(String.format("[ERROR]Execution failed with following error : " +
-                        "[IACValidationException(super=io.jenkins.plugins.google.analyze.code.security.exception.IACValidationException:" +
-                        " Failed to Scan file due to following error : [%s], statusCode=400)]",
-                CustomerMessage.MALFORMED_SCC_CREDENTIAL), build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "Invoking IAC Validating Service for validating  Scan file", build);
+        jenkinsRule.assertLogContains(
+                String.format(
+                        "[ERROR]Execution failed with following error : "
+                                + "[IACValidationException(super=io.jenkins.plugins.google.analyze.code.security.exception.IACValidationException:"
+                                + " Failed to Scan file due to following error : [%s], statusCode=400)]",
+                        CustomerMessage.MALFORMED_SCC_CREDENTIAL),
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published plugin error report", build);
     }
 
@@ -307,12 +387,18 @@ public class CodeScanBuildStepTest {
         final String orgID = "77783840325";
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(orgID,
-                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME, /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_FALSE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                orgID,
+                DUMMY_SCAN_FILE_WITH_VULNERABILITIES_NAME,
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(orgID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(List.of(new CredentialPair(orgID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
@@ -322,9 +408,11 @@ public class CodeScanBuildStepTest {
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched SCC Credentials", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched Scan file", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Requesting Validation Service Polling Endpoint", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "[ERROR]Execution failed with following error : " +
-                "[IACValidationException(super=io.jenkins.plugins.google.analyze.code.security.exception.IACValidationException:" +
-                " Failed to Scan file due to following error : [Forbidden], statusCode=403)]", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "[ERROR]Execution failed with following error : "
+                        + "[IACValidationException(super=io.jenkins.plugins.google.analyze.code.security.exception.IACValidationException:"
+                        + " Failed to Scan file due to following error : [Forbidden], statusCode=403)]",
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published plugin error report", build);
     }
 
@@ -336,12 +424,19 @@ public class CodeScanBuildStepTest {
         }
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         p.getBuildersList().add(addScanFileToWorkspace(/*scanFileName=*/ "malformedPlanFile.json"));
-        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(DUMMY_ORG_ID,
-                /*scanFileName=*/ "malformedPlanFile.json", /*filePath=*/ null, Config.SCAN_TIMEOUT_DEFAULT,
-                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE, IGNORE_ASSET_VIOLATION_FALSE, DUMMY_ASSET_VIOLATION_CONFIG,
+        final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
+                DUMMY_ORG_ID,
+                /*scanFileName=*/ "malformedPlanFile.json",
+                /*filePath=*/ null,
+                Config.SCAN_TIMEOUT_DEFAULT,
+                FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,
+                IGNORE_ASSET_VIOLATION_FALSE,
+                DUMMY_ASSET_VIOLATION_CONFIG,
                 ConfigAggregator.OR);
-        codeScanBuildStep.getDescriptor().setCredentialPairs(List.of(new CredentialPair(DUMMY_ORG_ID,
-                Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
+        codeScanBuildStep
+                .getDescriptor()
+                .setCredentialPairs(
+                        List.of(new CredentialPair(DUMMY_ORG_ID, Secret.fromString(DUMMY_VALID_SCC_CREDENTIAL))));
         p.getBuildersList().add(codeScanBuildStep);
 
         FreeStyleBuild build = p.scheduleBuild2(/*quietPeriod=*/ 0).get();
@@ -351,20 +446,22 @@ public class CodeScanBuildStepTest {
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched SCC Credentials", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully fetched Scan file", build);
         jenkinsRule.assertLogContains(/*substring=*/ "Requesting Validation Service Polling Endpoint", build);
-        jenkinsRule.assertLogContains(/*substring=*/ "[ERROR]Execution failed with following error : " +
-                "[IACValidationException(super=io.jenkins.plugins.google.analyze.code.security.exception.IACValidationException: " +
-                "Failed to Scan file due to following error : [Bad Request], statusCode=400)]", build);
+        jenkinsRule.assertLogContains(
+                /*substring=*/ "[ERROR]Execution failed with following error : "
+                        + "[IACValidationException(super=io.jenkins.plugins.google.analyze.code.security.exception.IACValidationException: "
+                        + "Failed to Scan file due to following error : [Bad Request], statusCode=400)]",
+                build);
         jenkinsRule.assertLogContains(/*substring=*/ "Successfully published plugin error report", build);
     }
 
     private TestBuilder addScanFileToWorkspace(final String scanFileName) {
         return new TestBuilder() {
             @Override
-            public boolean perform(AbstractBuild<?, ?> build,
-                                   Launcher launcher, BuildListener listener)
+            public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
                     throws InterruptedException, IOException {
-                Objects.requireNonNull(build.getWorkspace()).child(scanFileName).copyFrom(
-                        Objects.requireNonNull(getClass().getResource(/*name=*/ "/" + scanFileName)));
+                Objects.requireNonNull(build.getWorkspace())
+                        .child(scanFileName)
+                        .copyFrom(Objects.requireNonNull(getClass().getResource(/*name=*/ "/" + scanFileName)));
                 return true;
             }
         };

@@ -21,8 +21,7 @@ package io.jenkins.plugins.google.analyze.code.security.commons;
  */
 public final class ReportConstants {
 
-    private ReportConstants() {
-    }
+    private ReportConstants() {}
 
     public static final String BUILD_SUMMARY_REPORT_PATH = "/GoogleAnalyzeCodeSecurity_ViolationSummary.html";
     public static final String PLUGIN_ERROR_REPORT_PATH = "/GoogleAnalyzeCodeSecurity_ErrorSummary.html";
@@ -34,13 +33,12 @@ public final class ReportConstants {
     public static final String DIV_CLOSE = "</div>";
     public static final String KEY_CLASS_DIV = "<div class=\"row--key\">$KEY_PLACEHOLDER$</div>";
     public static final String VALUE_CLASS_DIV = "<div class=\"row--value\">$VALUE_PLACEHOLDER$</div>";
-    public static final String REPORT_OPEN_HTML = "<!DOCTYPE html>\n" +
-            "<html lang=\"en\">\n" +
-            "  <head>\n" +
-            "    <meta charset=\"UTF-8\">\n" +
-            "    <link rel=\"stylesheet\" href=\"./styles.css\">\n" +
-            "  </head>\n" +
-            "  <body>\n" +
-            "    <h1 class=\"title\">$REPORT_TITLE$</h1>";
+    public static final String REPORT_OPEN_HTML = "<!DOCTYPE html>\n" + "<html lang=\"en\">\n"
+            + "  <head>\n"
+            + "    <meta charset=\"UTF-8\">\n"
+            + "    <link rel=\"stylesheet\" href=\"./styles.css\">\n"
+            + "  </head>\n"
+            + "  <body>\n"
+            + "    <h1 class=\"title\">$REPORT_TITLE$</h1>";
     public static final String REPORT_CLOSE_HTML = " </body>\n</html>";
 }
