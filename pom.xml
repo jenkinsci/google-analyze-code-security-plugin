@@ -12,9 +12,7 @@
  implied. See the License for the specific language governing permissions and limitations under the
  License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -35,6 +33,11 @@
   <name>Google Analyze Code Security</name>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin/blob/develop/docs/home.md</url>
 
+  <organization>
+    <name>Google</name>
+    <url>https://www.google.com</url>
+  </organization>
+
   <licenses>
     <license>
       <name>The Apache V2 License</name>
@@ -42,11 +45,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
-  <organization>
-    <name>Google</name>
-    <url>https://www.google.com</url>
-  </organization>
 
   <developers>
     <developer>
@@ -64,7 +62,6 @@
   </scm>
 
   <properties>
-    <revision>1.0</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.version>2.414.3</jenkins.version>
@@ -78,8 +75,8 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.387.x</artifactId>
-        <version>2423.vce598171d115</version>
+        <artifactId>bom-2.414.x</artifactId>
+        <version>2746.vb_79a_1d3e7b_c8</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -87,19 +84,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>2.19.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>2.19.0</version>
-      <scope>test</scope>
-    </dependency>
 
     <!-- OAuth Token Generation Library & it's dependencies-->
 
@@ -116,38 +100,15 @@
       <version>1.43.3</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
-    <dependency>
-      <groupId>com.google.api-client</groupId>
-      <artifactId>google-api-client</artifactId>
-      <version>2.2.0</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>32.0.0-android</version>
-    </dependency>
-
     <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.14</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpmime</artifactId>
-      <version>4.3.1</version>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>apache-httpcomponents-client-4-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-xml</artifactId>
-      <version>2.15.2</version>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jackson2-api</artifactId>
     </dependency>
 
     <dependency>
@@ -155,6 +116,17 @@
       <artifactId>lombok</artifactId>
       <version>1.18.30</version>
       <scope>provided</scope>
+    </dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
