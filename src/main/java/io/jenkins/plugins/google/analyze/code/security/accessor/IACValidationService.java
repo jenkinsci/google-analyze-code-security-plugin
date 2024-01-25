@@ -67,7 +67,7 @@ import org.springframework.security.access.AccessDeniedException;
  */
 public class IACValidationService {
     private static final String VALIDATE_ENDPOINT_DOMAIN =
-            "https://staging-securityposture-googleapis.sandbox.google.com/v1alpha";
+            "https://securityposture.googleapis.com/v1alpha";
     private static final String VALIDATE_ENDPOINT_PATH =
             "/organizations/{ORG_ID}/locations/global/reports:createIaCValidationReport";
     private static final String VALIDATE_URL = VALIDATE_ENDPOINT_DOMAIN + VALIDATE_ENDPOINT_PATH;
