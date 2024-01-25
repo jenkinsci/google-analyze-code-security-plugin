@@ -250,7 +250,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
     }
 
     /**
-     * Invoked by Jenkins UX to determine state of {@link this.ignoreAssetViolation}. Defaults to `true` if found to
+     * Invoked by Jenkins UX to determine state of {@code this.ignoreAssetViolation}. Defaults to `true` if found to
      * be null.
      */
     public Boolean isIgnoreAssetViolation() {
@@ -258,7 +258,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
     }
 
     /**
-     * Invoked by Jenkins UX to determine state of {@link this.configAggregator}. Defaults to
+     * Invoked by Jenkins UX to determine state of {@code this.configAggregator}. Defaults to
      * {@code ConfigAggregator.OR}.
      */
     public Boolean isConfigAggregatorAND() {
@@ -293,7 +293,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
         }
 
         /**
-         * Invoked by Jenkins UX to fetch default value for {@link this.scanTimeOut}
+         * Invoked by Jenkins UX to fetch default value for {@code this.scanTimeOut}
          */
         public Integer getDefaultScanTimeOut() {
             return Config.SCAN_TIMEOUT_DEFAULT;
@@ -349,7 +349,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
          * </p>
          *
          * @param scanFileName scan file name.
-         * @param item         basic configuration unit in Hudson.
+         * @param item basic configuration unit in Hudson.
          * @return FormValidation
          */
         @POST
@@ -365,7 +365,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
          * Validates scanTimeOut is within expected range.
          *
          * @param scanTimeOut timeout in milliseconds after which scan is aborted.
-         * @param item        basic configuration unit in Hudson.
+         * @param item  basic configuration unit in Hudson.
          * @return String
          */
         @POST
