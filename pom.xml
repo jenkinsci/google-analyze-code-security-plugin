@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.76</version>
+    <version>4.77</version>
     <relativePath />
   </parent>
 
@@ -31,7 +31,7 @@
   <packaging>hpi</packaging>
 
   <name>Google Analyze Code Security</name>
-  <url>https://github.com/jenkinsci/${project.artifactId}-plugin/blob/develop/docs/home.md</url>
+  <url>https://github.com/jenkinsci/${project.artifactId}-plugin/blob/main/docs/home.md</url>
 
   <organization>
     <name>Google</name>
@@ -91,7 +91,7 @@
     <dependency>
       <groupId>com.google.auth</groupId>
       <artifactId>google-auth-library-oauth2-http</artifactId>
-      <version>1.19.0</version>
+      <version>1.22.0</version>
     </dependency>
 
     <dependency>

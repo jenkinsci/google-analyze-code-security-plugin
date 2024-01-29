@@ -39,7 +39,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install jq
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ inputs.java-version }}
@@ -71,14 +71,14 @@ jobs:
           # 2. Remove suppressed warnings because GitHub Code Scanning does not support inline suppressions
           jq 'setpath(path(.runs[].tool.driver.name); "Jenkins Security Scan") | setpath(path(.runs[].tool.driver.organization); "Jenkins Project") | del(.runs[].results[] | select( .suppressions | length != 0 ))' jenkins-security-scan-raw.sarif > jenkins-security-scan.sarif
       - name: Archive SARIF
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: |
             jenkins-security-scan-raw.sarif
             jenkins-security-scan.sarif
           name: Jenkins Security Scan SARIF
       - name: Upload Scan Result
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: jenkins-security-scan.sarif
           category: Jenkins Security Scan
