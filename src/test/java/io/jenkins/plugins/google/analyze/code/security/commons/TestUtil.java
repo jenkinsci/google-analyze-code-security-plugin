@@ -31,7 +31,7 @@ import java.util.List;
 public final class TestUtil {
     private TestUtil() {}
 
-    public static final String DUMMY_ORG_ID = "777838403257";
+    public static final String DUMMY_ORG_ID = "627849321070";
     public static final String DUMMY_VALIDATE_FILE_PATH = "/dummyValidateFilePath";
     public static final String DUMMY_SCAN_START_TIME = "05 01 2024 08:42:00";
     public static final String DUMMY_SCAN_END_TIME = "05 01 2024 08:42:04";
@@ -43,9 +43,9 @@ public final class TestUtil {
                     .severity(Severity.CRITICAL)
                     .nextSteps("You can fix this by following Step 1, Step 2 and Step 3")
                     .violatedPosture(PostureDetails.builder()
-                            .postureDeployment("organizations/777838403257/locations/global/postureDeployments/pd1")
+                            .postureDeployment("organizations/627849321070/locations/global/postureDeployments/pd1")
                             .postureDeploymentTargetResource("folders/123456")
-                            .posture("organizations/777838403257/locations/global/postures/posture1")
+                            .posture("organizations/627849321070/locations/global/postures/posture1")
                             .postureRevisionId("rev1")
                             .policySet("my-policy-set-1")
                             .build())

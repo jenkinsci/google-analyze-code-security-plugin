@@ -103,11 +103,19 @@ public final class ValidationUtils {
                     .build();
         }
         final Map<Severity, Integer> violationsThresholdConfigMap = new HashMap<>();
-        assetViolationConfigs.forEach((assetViolationConfig -> {
+        for (AssetViolationConfig assetViolationConfig : assetViolationConfigs) {
             final Severity severity = assetViolationConfig.getSeverity();
+            final int threshold = assetViolationConfig.getCount();
+            if (threshold <= 0) {
+                return ValidationResponse.builder()
+                        .isValid(false)
+                        .errors(List.of(
+                                String.format(CustomerMessage.INVALID_SEVERITY_THRESHOLD, severity.name(), threshold)))
+                        .build();
+            }
             violationsThresholdConfigMap.putIfAbsent(severity, 0);
             violationsThresholdConfigMap.put(severity, violationsThresholdConfigMap.get(severity) + 1);
-        }));
+        }
         List<String> duplicateConfigs = new ArrayList<>();
         violationsThresholdConfigMap.forEach(((violationSeverity, count) -> {
             if (count > 1) {

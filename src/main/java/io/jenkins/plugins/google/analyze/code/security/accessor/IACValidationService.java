@@ -35,6 +35,7 @@ import io.jenkins.plugins.google.analyze.code.security.exception.IACValidationEx
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.ValidateIACParams;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.request.IAC;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.request.Request;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Error;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IaCValidationReport;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Response;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Severity;
@@ -191,7 +192,9 @@ public class IACValidationService {
                 String resJSON = closeableHttpClient.execute(httpGet, this::handleIACValidationResponse);
                 response = mapper.readValue(resJSON, Response.class);
                 listener.getLogger().print(LogUtils.info("Received Response from Validation Service Endpoint"));
-                if (response != null && response.getDone().equals(Boolean.TRUE)) {
+                if (response != null
+                        && response.getDone() != null
+                        && response.getDone().equals(Boolean.TRUE)) {
                     break;
                 }
             } catch (Exception ex) {
@@ -212,14 +215,14 @@ public class IACValidationService {
     }
 
     private void validatePollResponse(final Response response) {
-        if (response == null || response.getDone().equals(false)) {
+        if (response == null || response.getDone() == null || response.getDone().equals(false)) {
             throw new IACValidationException(500, "[Internal Error]  Polling Validation Service Endpoint Timed Out");
         }
         if (response.getError() != null) {
             throw new IACValidationException(
                     response.getError().getCode(),
                     String.format(
-                            "Validation Service Endpoint" + "Returned Error Response with following error : [%s]",
+                            "Validation Service Endpoint Returned Error Response with following error : [%s]",
                             response.getError().getMessage()));
         }
         final List<Violation> violations = getViolations(response);
@@ -246,7 +249,7 @@ public class IACValidationService {
         final IaCValidationReport validationReport = response.getResult().getValidationReport();
         if (validationReport == null) {
             throw new IACValidationException(
-                    500, "[Internal Error] Validation Endpoint Returned Response with " + "Invalid validationReport");
+                    500, "[Internal Error] Validation Endpoint Returned Response with Invalid validationReport");
         }
         return validationReport.getViolations();
     }
@@ -314,11 +317,13 @@ public class IACValidationService {
      * {@code ResponseHandler} functional interface signature.
      */
     private String handleCredentialValidationResponse(final HttpResponse response) {
-        StatusLine statusLine = response.getStatusLine();
+        final StatusLine statusLine = response.getStatusLine();
+        final HttpEntity entity = response.getEntity();
         if (statusLine.getStatusCode() == HttpStatus.SC_FORBIDDEN) {
+            String errorMessage = getErrorMessage(entity, statusLine.getReasonPhrase());
             throw new AccessDeniedException(String.format(
                     "Received Access Denied Exception with status Code : %s & Reason : %s",
-                    statusLine.getStatusCode(), statusLine.getReasonPhrase()));
+                    statusLine.getStatusCode(), errorMessage));
         }
         return "SuccessFully Validated Credentials";
     }
@@ -332,14 +337,35 @@ public class IACValidationService {
      * @throws IOException scenarios where exception occurs during network I/O or request serialization.
      */
     private String handleIACValidationResponse(final HttpResponse response) throws IOException {
-        StatusLine statusLine = response.getStatusLine();
+        final StatusLine statusLine = response.getStatusLine();
+        final HttpEntity entity = response.getEntity();
         if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
-            throw new IACValidationException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+            String errorMessage = statusLine.getReasonPhrase();
+            if (entity != null) {
+                errorMessage = EntityUtils.toString(entity);
+            }
+            throw new IACValidationException(statusLine.getStatusCode(), errorMessage);
         }
-        HttpEntity entity = response.getEntity();
+
         if (entity == null) {
             throw new ClientProtocolException("Response contains no content");
         }
         return EntityUtils.toString(entity);
+    }
+
+    private String getErrorMessage(final HttpEntity httpEntity, final String fallBackMessage) {
+        if (httpEntity == null) {
+            return fallBackMessage;
+        }
+        try {
+            Response response = mapper.readValue(EntityUtils.toString(httpEntity), Response.class);
+            Error error = response.getError();
+            if (error == null) {
+                return fallBackMessage;
+            }
+            return String.format("status: [%s], message : [%s]", error.getCode(), error.getMessage());
+        } catch (Exception ignored) {
+            return fallBackMessage;
+        }
     }
 }

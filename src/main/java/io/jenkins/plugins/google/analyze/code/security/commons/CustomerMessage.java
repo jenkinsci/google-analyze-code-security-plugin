@@ -33,7 +33,7 @@ public final class CustomerMessage {
     public static final String INVALID_SEVERITY_CONFIG =
             "Invalid Asset Violation Config Duplicate entries exist for : %s";
     public static final String INVALID_CREDENTIAL_INSUFFICIENT_PERMISSION =
-            "Credentials Corresponding to OrgID : %s have insufficient " + "permissions";
+            "Credentials Corresponding to OrgID : %s have insufficient permissions with following error : %s";
     public static final String CREDENTIAL_PAIR_VALIDATION_ERROR = "Encountered Error while Validating Credential : %s";
     public static final String VALID_CREDENTIAL_PAIR = "Successfully Verified Credentials";
     public static final String INVALID_SCC_CREDENTIAL = "Invalid SCC Credential for OrgID : [%s]";
@@ -48,6 +48,9 @@ public final class CustomerMessage {
     public static final String MALFORMED_SCAN_FILE = "[Invalid Request] Scan File found to be Malformed";
     public static final String EMPTY_ASSET_VIOLATION_CONFIG =
             "[Invalid Config] Asset Violation Config can not be empty" + " with ignore asset violation set to false";
+    public static final String INVALID_SEVERITY_THRESHOLD =
+            "[Invalid Config] Severity threshold should be positive integer. Found threshold corresponding : [%s]"
+                    + " severity to be: [%s]";
     public static final String IAC_VALIDATION_EXCEPTION_MSG = "Failed to Scan file due to following error : [%s]";
     public static final String WORKSPACE_PATH_MISSING = "Failed to fetch Workspace Path";
     public static final String CREDENTIAL_VALIDATION_INTERNAL_ERROR =

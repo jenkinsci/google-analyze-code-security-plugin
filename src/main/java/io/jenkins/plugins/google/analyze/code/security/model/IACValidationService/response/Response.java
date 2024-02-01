@@ -22,7 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 /**
  * Response models Response Object present in SCC IAC Scan Validation Response.
@@ -33,10 +32,8 @@ import lombok.NonNull;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {
-    @NonNull
     private final String name;
 
-    @NonNull
     private final Boolean done;
 
     private final OperationMetadata metadata;

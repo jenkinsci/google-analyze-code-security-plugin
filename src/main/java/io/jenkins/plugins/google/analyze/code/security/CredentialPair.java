@@ -102,8 +102,8 @@ public class CredentialPair extends AbstractDescribableImpl<CredentialPair> impl
                 IACValidationService.getInstance().validateCredentials(orgID, credential);
                 return FormValidation.ok(CustomerMessage.VALID_CREDENTIAL_PAIR);
             } catch (AccessDeniedException ex) {
-                return FormValidation.error(
-                        String.format(CustomerMessage.INVALID_CREDENTIAL_INSUFFICIENT_PERMISSION, orgID));
+                return FormValidation.error(String.format(
+                        CustomerMessage.INVALID_CREDENTIAL_INSUFFICIENT_PERMISSION, orgID, ex.getMessage()));
             } catch (IllegalArgumentException ex) {
                 return FormValidation.error(
                         String.format(CustomerMessage.CREDENTIAL_PAIR_VALIDATION_ERROR, ex.getMessage()));
