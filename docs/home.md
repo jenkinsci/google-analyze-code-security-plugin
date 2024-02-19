@@ -19,6 +19,7 @@
 
 The Google Analyze Code Security plugin for Jenkins identifies insecure configurations in Infrastructure as Code (IaC) files for Google Cloud resources. This plugin requires Terraform plan files in JSON format for scanning.
 
+Note: Don’t enter any sensitive information such as passwords and other personal identifiable information in  the Terraform plan files.
 
 ## Set up credentials
 
@@ -74,3 +75,8 @@ The Google Analyze Code Security plugin for Jenkins identifies insecure configur
 1. To view the plugin report, click the most recent workflow. <br />
    * If the plugin ran, it publishes a violation report under **Build Artifacts**. ![violation_summary](images/BuildViolationSummary.png) <br />
    * If the plugin failed, it publishes an error report under **Build Artifacts**. ![plugin_error_summary](images/PluginErrorSummary.png)
+
+## Supported asset types and policies
+
+
+For information about supported asset types and policies, see [IaC Validation - Supported assets and policies](https://www.gstatic.com/cloud_security_posture/iac_validation_supported_assets_and_policies.pdf).
