@@ -64,7 +64,18 @@ public class CodeScanBuildStepTest {
     private static final String DUMMY_INVALID_ORG_ID = "cscscs";
 
     // Please add service account credentials before invoking the E2E test.
-    private static final String DUMMY_VALID_SCC_CREDENTIAL = "";
+    private static final String DUMMY_VALID_SCC_CREDENTIAL = "{\n" + "  \"type\": \"service_account\",\n"
+            + "  \"project_id\": \"iac-scan-integration-test\",\n"
+            + "  \"private_key_id\": \"7426f5caf5f4f8b20dee2df3dbcb895f0949e918\",\n"
+            + "  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCmfo19zcRKA7/3\\nIoRxNZeLLG7eEMPCQnHZBVI//bd+YVmMESW/K5E3LG+3HDv++Q4U8K+MmnNaYXL1\\nTdP1VVPcUVt2cruUsI66sZ2mfekQSqXRMEdz+3O5sZBmAvF18afs149u3Ze/P+0P\\npq08ERrFq3WXVIdz6CK1c+HpGMWVT5PZJ8ft88P3YxMaAvca7aZwmhFQ9XB9NJJD\\nOWARHbj5VokAEzfGZRbylV0UrvoOzRjbAnHy2e4ehQ8RLe9DZIp0x4T2eWQCSxXM\\n7izwLWCcltWgoHbOeUnj0Y5SoL360YHs9aPhpIB63bWVdmh9JOECni4MwrZa6o91\\n5P5U8O73AgMBAAECggEAUlUlsg8FoNZO4S7UEMnAOYYNA0qGC7Pg6cF8ZYGZcmlA\\np4e5Q1qPkpmqWwIe1x0hLhDBtwWPwqOK/ixxAxKhiENBOAdPpJ1Uz5TS0YjVLoXD\\njvlRdFTl6u+YaSHOdxU8Bd6pItl4144MtF8nrpsEwrhhy6Z030ftlg6KqkLiPk2Q\\n7RTP9VB4GqC8D1hU2R2/YD+nmLRNMxXABAFvB3wyFFhpw/ncd3O4y0wiC/8VnTwj\\nR2TUudTjSEwtncWXvc5edWb0WSZQMHqBecEDPOa2wtBhU7jq13zJQy+pbvcWiggt\\ndtXjLdH/KASImRurKgLG/NcIstPdhxv2aIP8s8oy/QKBgQDmq08aDuNdNbbcv6+m\\n6Jb6/1C95di99Eezn241P2Px4YqW9n7RPn4ESLsxMqL2ElYmJLzITmv5D0OO6SOC\\nql5+cjkfQp1gm2APpCFm9QchIJ04+vOst66G/a4ySe0jBm/1/E4X+1jnSAjtwCam\\nb2+zWrXYrDMB5TxzPLqKzb6ePQKBgQC4xyC1FxXjVFqAfGAp5uOSMWDFlAXNbKyg\\nAFs9ZAxJs4phrFdG+aYp3fu7dAS6S9xvuVD+OaneGGM6DT6/hySbT3yjUrfcLzAc\\nSW1vOqvAHTAcblzzuu+EolEHDsilCXVPdMDa8+h63Jk1SXBhISDXCWUXspsBfRLl\\nQNIpHqjpQwKBgQCKFmmvPtRrm1lSA0qjD8A6mBd85xj+djtqU3oFVGJ/jbaKsxuu\\nJcwIwoWVaSvXRZjfEsUU4KWQnsuhxP2mHlmdNsHtbdKK39j85BO+79aJxV15m/m+\\nHuPTGhBrOIhGnHbv+k/B2Y0aP6xgr9QzdKiY5SfRgxyx+MpcbjF6ILsJPQKBgQCa\\n79XcIvxmfy/X9vKHkCQYTLExWvo2kz54d3QKGR84mYSae/E/AUy0ZH+VYiYotD2l\\nrQVd9qoaIebqIXsRDFfEpzUCmfSzexnjTiqmDtM/JvpVjLECaig21ggNW/cgc7rb\\nIjIoJkc05k7NYMQLncS0qxsKcOgKqn6yntTaR+wokwKBgQCfJmaJP32RlXnnEf/i\\nXyUitZJqbZACuOBmKAXaV3R73fTcBr9MFFVZMYqL6xKZhzGgWjkgOyiOu/MH5MjK\\nomMWb2JVKDW1E9ujlnkmkIcPrLhiTlJPZJ+XYstfcJKGU8byImJoDHctZjKE5xNZ\\nk7YEaicTxXW/HCQJDmXB1Tw+wg==\\n-----END PRIVATE KEY-----\\n\",\n"
+            + "  \"client_email\": \"iac-scan-plugins@iac-scan-integration-test.iam.gserviceaccount.com\",\n"
+            + "  \"client_id\": \"114382309299633521592\",\n"
+            + "  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\n"
+            + "  \"token_uri\": \"https://oauth2.googleapis.com/token\",\n"
+            + "  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\n"
+            + "  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/iac-scan-plugins%40iac-scan-integration-test.iam.gserviceaccount.com\",\n"
+            + "  \"universe_domain\": \"googleapis.com\"\n"
+            + "}\n";
 
     private static final String DUMMY_MALFORMED_SCC_CREDENTIALS = "{\n" + "  \"type\": \"service_account\",\n"
             + "  \"project_id\": \"dummy-project\",\n"

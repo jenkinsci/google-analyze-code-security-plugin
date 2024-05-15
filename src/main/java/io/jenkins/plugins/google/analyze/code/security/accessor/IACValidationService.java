@@ -102,7 +102,7 @@ public class IACValidationService {
      *
      * @return violations detected in the IAC file.
      */
-    public List<Violation> validateIAC(@NonNull final ValidateIACParams validateIACParams) {
+    public IaCValidationReport validateIAC(@NonNull final ValidateIACParams validateIACParams) {
         final PrintStream printStream = validateIACParams.getListener().getLogger();
         printStream.print(LogUtils.info("Invoking IAC Validating Service for validating  Scan file"));
         validateIACValidationRequest(
@@ -171,7 +171,7 @@ public class IACValidationService {
         }
     }
 
-    private List<Violation> pollValidateEndpoint(
+    private IaCValidationReport pollValidateEndpoint(
             final String url,
             @NonNull final Instant requestReceiveInstant,
             @NonNull final Integer pluginTimeoutInMS,
@@ -211,7 +211,7 @@ public class IACValidationService {
         }
 
         validatePollResponse(response);
-        return processResponse(response.getResult().getValidationReport().getViolations());
+        return processResponse(response.getResult().getValidationReport());
     }
 
     private void validatePollResponse(final Response response) {
@@ -275,14 +275,15 @@ public class IACValidationService {
      * Adds default handling in the SCC Response which is missing as PROTO3 to JSON
      * conversion is not taking into account defaults.
      */
-    private List<Violation> processResponse(final List<Violation> violations) {
-        if (violations == null) return new ArrayList<>();
+    private IaCValidationReport processResponse(final IaCValidationReport report) {
+        List<Violation> violations = report.getViolations();
+        if (violations == null) return IaCValidationReport.builder().violations(new ArrayList<>()).note(report.getNote()).build();
         for (Violation violation : violations) {
             if (violation.getSeverity() == null) {
                 violation.setSeverity(Severity.SEVERITY_UNSPECIFIED);
             }
         }
-        return violations;
+        return IaCValidationReport.builder().violations(violations).note(report.getNote()).build();
     }
 
     private void validateScanFile(final byte[] tfPlanJSON) {
