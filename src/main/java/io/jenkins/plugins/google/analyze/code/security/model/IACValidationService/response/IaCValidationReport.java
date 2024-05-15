@@ -31,4 +31,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class IaCValidationReport {
     private List<Violation> violations;
+    private String note;
 }

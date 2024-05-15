@@ -31,5 +31,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @ToString(callSuper = true)
 public class IACScanReportRequest extends ReportBuildRequest {
-    private List<Violation> violations;
+    private IaCValidationReport report;
 }
