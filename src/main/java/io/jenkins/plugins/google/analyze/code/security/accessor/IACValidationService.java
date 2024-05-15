@@ -277,13 +277,20 @@ public class IACValidationService {
      */
     private IaCValidationReport processResponse(final IaCValidationReport report) {
         List<Violation> violations = report.getViolations();
-        if (violations == null) return IaCValidationReport.builder().violations(new ArrayList<>()).note(report.getNote()).build();
+        if (violations == null)
+            return IaCValidationReport.builder()
+                    .violations(new ArrayList<>())
+                    .note(report.getNote())
+                    .build();
         for (Violation violation : violations) {
             if (violation.getSeverity() == null) {
                 violation.setSeverity(Severity.SEVERITY_UNSPECIFIED);
             }
         }
-        return IaCValidationReport.builder().violations(violations).note(report.getNote()).build();
+        return IaCValidationReport.builder()
+                .violations(violations)
+                .note(report.getNote())
+                .build();
     }
 
     private void validateScanFile(final byte[] tfPlanJSON) {

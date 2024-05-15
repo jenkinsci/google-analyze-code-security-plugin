@@ -350,8 +350,10 @@ public class IACValidationServiceTest {
     private Response buildResponse(final List<Violation> violations) {
         final Result result = Result.builder()
                 .name("organizations/627849321070/locations/global/reports/e07358ef-cc8d-4834-a41e-6efcb8177251")
-                .validationReport(
-                        IaCValidationReport.builder().violations(violations).note(DUMMY_NOTE).build())
+                .validationReport(IaCValidationReport.builder()
+                        .violations(violations)
+                        .note(DUMMY_NOTE)
+                        .build())
                 .createTime("2024-12-29T05:56:10.216565277Z")
                 .updateTime("2024-12-29T05:56:10.216565277Z")
                 .build();

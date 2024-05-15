@@ -77,5 +77,6 @@ public final class TestUtil {
                     .severity(Severity.LOW)
                     .build());
 
-    public static final String DUMMY_NOTE = "IaC validation is limited to certain asset types and policies. For information about supported asset types and policies for IaC validation, see https://cloud.google.com/security-command-center/docs/supported-iac-assets-policies.";
+    public static final String DUMMY_NOTE =
+            "IaC validation is limited to certain asset types and policies. For information about supported asset types and policies for IaC validation, see https://cloud.google.com/security-command-center/docs/supported-iac-assets-policies.";
 }

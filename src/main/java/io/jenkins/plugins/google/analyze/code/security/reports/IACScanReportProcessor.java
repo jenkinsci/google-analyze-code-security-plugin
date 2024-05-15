@@ -84,7 +84,9 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
             content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
                     HTMLIndent.ZERO, /*key=*/ "Summary:", /*value=*/ "No issues found"));
             content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
-                    HTMLIndent.ZERO, /*key=*/ "Note", /*value=*/ iacScanReportRequest.getReport().getNote()));
+                    HTMLIndent.ZERO,
+                    /*key=*/ "Note",
+                    /*value=*/ iacScanReportRequest.getReport().getNote()));
             content.add(ReportConstants.REPORT_CLOSE_HTML);
             content.removeIf(String::isEmpty);
             return StringUtils.join(content, /*separator=*/ "\n");
@@ -93,7 +95,9 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
                 HTMLIndent.ZERO, /*key=*/ "Summary:", /*value=*/ violations.size() + " issues found"));
         addViolationInfo(violations, content);
         content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
-                HTMLIndent.ZERO, /*key=*/ "Note", /*value=*/ iacScanReportRequest.getReport().getNote()));
+                HTMLIndent.ZERO,
+                /*key=*/ "Note",
+                /*value=*/ iacScanReportRequest.getReport().getNote()));
         content.add(ReportConstants.REPORT_CLOSE_HTML);
         content.removeIf(String::isEmpty);
         return StringUtils.join(content, /*separator=*/ "\n");

@@ -17,7 +17,6 @@
 package io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response;
 
 import io.jenkins.plugins.google.analyze.code.security.model.ReportBuildRequest;
-import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
