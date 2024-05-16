@@ -16,6 +16,7 @@
 
 package io.jenkins.plugins.google.analyze.code.security.accessor;
 
+import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_NOTE;
 import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_ORG_ID;
 import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_VIOLATIONS;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -111,7 +112,9 @@ public class IACValidationServiceTest {
             + "        \"name\": \"organizations/627849321070/locations/global/reports/142336eb-5c66-4283-bb3e-681595ac0644\",\n"
             + "        \"createTime\": \"2024-01-05T08:42:02.302457702Z\",\n"
             + "        \"updateTime\": \"2024-01-05T08:42:02.302457702Z\",\n"
-            + "        \"iacValidationReport\": {}\n"
+            + "        \"iacValidationReport\": {\n"
+            + "             \"note\": \"IaC validation is limited to certain asset types and policies. For information about supported asset types and policies for IaC validation, see https://cloud.google.com/security-command-center/docs/supported-iac-assets-policies.\"\n"
+            + "        }\n"
             + "    }\n"
             + "}";
     private static final String DUMMY_JSON_NON_EMPTY_VIOLATIONS_RES = "{\n"
@@ -177,7 +180,8 @@ public class IACValidationServiceTest {
             + "          \"policyId\": \"folders/123456/policies/custom.uniformBucketLevelAccess\",\n"
             + "          \"severity\": \"LOW\"\n"
             + "        }\n"
-            + "      ]\n"
+            + "      ],\n"
+            + "             \"note\": \"IaC validation is limited to certain asset types and policies. For information about supported asset types and policies for IaC validation, see https://cloud.google.com/security-command-center/docs/supported-iac-assets-policies.\"\n"
             + "    }\n"
             + "  }\n"
             + "}";
@@ -227,9 +231,9 @@ public class IACValidationServiceTest {
         when(closeableHttpClient.execute(eq(httpGet), any(ResponseHandler.class)))
                 .thenReturn(DUMMY_JSON_NON_EMPTY_VIOLATIONS_RES);
 
-        final List<Violation> violations = iacValidationService.validateIAC(getValidIACValidationRequest(listener));
+        final IaCValidationReport report = iacValidationService.validateIAC(getValidIACValidationRequest(listener));
 
-        assertEquals(violations, response.getResult().getValidationReport().getViolations());
+        assertEquals(report, response.getResult().getValidationReport());
         verify(closeableHttpClient, times(/*wantedNumberOfInvocations=*/ 1))
                 .execute(eq(httpPost), any(ResponseHandler.class));
         verify(oAuthClient, times(/*wantedNumberOfInvocations=*/ 2))
@@ -246,9 +250,9 @@ public class IACValidationServiceTest {
         when(closeableHttpClient.execute(eq(httpGet), any(ResponseHandler.class)))
                 .thenReturn(DUMMY_JSON_EMPTY_VIOLATIONS_RES);
 
-        final List<Violation> violations = iacValidationService.validateIAC(getValidIACValidationRequest(listener));
+        final IaCValidationReport report = iacValidationService.validateIAC(getValidIACValidationRequest(listener));
 
-        assertEquals(violations, response.getResult().getValidationReport().getViolations());
+        assertEquals(report, response.getResult().getValidationReport());
         verify(closeableHttpClient, times(/*wantedNumberOfInvocations=*/ 1))
                 .execute(eq(httpPost), any(ResponseHandler.class));
         verify(oAuthClient, times(/*wantedNumberOfInvocations=*/ 2))
@@ -284,9 +288,9 @@ public class IACValidationServiceTest {
                 .thenReturn(DUMMY_JSON_POLL_ENDPOINT_RES)
                 .thenReturn(DUMMY_JSON_NON_EMPTY_VIOLATIONS_RES);
 
-        final List<Violation> violations = iacValidationService.validateIAC(getValidIACValidationRequest(listener));
+        final IaCValidationReport report = iacValidationService.validateIAC(getValidIACValidationRequest(listener));
 
-        assertEquals(violations, response.getResult().getValidationReport().getViolations());
+        assertEquals(report, response.getResult().getValidationReport());
         verify(closeableHttpClient, times(/*wantedNumberOfInvocations=*/ 1))
                 .execute(eq(httpPost), any(ResponseHandler.class));
         verify(oAuthClient, times(/*wantedNumberOfInvocations=*/ 3))
@@ -348,8 +352,10 @@ public class IACValidationServiceTest {
     private Response buildResponse(final List<Violation> violations) {
         final Result result = Result.builder()
                 .name("organizations/627849321070/locations/global/reports/e07358ef-cc8d-4834-a41e-6efcb8177251")
-                .validationReport(
-                        IaCValidationReport.builder().violations(violations).build())
+                .validationReport(IaCValidationReport.builder()
+                        .violations(violations)
+                        .note(DUMMY_NOTE)
+                        .build())
                 .createTime("2024-12-29T05:56:10.216565277Z")
                 .updateTime("2024-12-29T05:56:10.216565277Z")
                 .build();
