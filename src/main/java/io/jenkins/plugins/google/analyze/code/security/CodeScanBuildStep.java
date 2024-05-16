@@ -41,7 +41,11 @@ import io.jenkins.plugins.google.analyze.code.security.exception.IACValidationEx
 import io.jenkins.plugins.google.analyze.code.security.model.ConfigAggregator;
 import io.jenkins.plugins.google.analyze.code.security.model.FileInfo;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.ValidateIACParams;
-import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.*;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.ErrorReportRequest;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IACScanReportRequest;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IaCValidationReport;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Severity;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Violation;
 import io.jenkins.plugins.google.analyze.code.security.model.PluginConfig;
 import io.jenkins.plugins.google.analyze.code.security.model.ValidationResponse;
 import io.jenkins.plugins.google.analyze.code.security.reports.ExecutionFailureReportProcessor;

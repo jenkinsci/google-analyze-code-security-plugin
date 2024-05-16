@@ -16,7 +16,9 @@
 
 package io.jenkins.plugins.google.analyze.code.security.accessor;
 
-import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.*;
+import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_NOTE;
+import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_ORG_ID;
+import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_VIOLATIONS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
