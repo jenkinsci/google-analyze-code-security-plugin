@@ -16,15 +16,13 @@
 
 package io.jenkins.plugins.google.analyze.code.security.reports;
 
-import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_FILE_PATH;
-import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_SCAN_END_TIME;
-import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_SCAN_START_TIME;
-import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.DUMMY_VIOLATIONS;
+import static io.jenkins.plugins.google.analyze.code.security.commons.TestUtil.*;
 import static org.junit.Assert.assertEquals;
 
 import io.jenkins.plugins.google.analyze.code.security.commons.ReportConstants;
 import io.jenkins.plugins.google.analyze.code.security.commons.TestUtil;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IACScanReportRequest;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IaCValidationReport;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Violation;
 import io.jenkins.plugins.google.analyze.code.security.utils.FileUtils;
 import java.io.IOException;
@@ -70,6 +68,10 @@ public class IACScanReportProcessorTest {
     }
 
     private IACScanReportRequest buildIACScanReportRequest(final List<Violation> violations) {
+        IaCValidationReport report = IaCValidationReport.builder()
+                .violations(violations)
+                .note(DUMMY_NOTE)
+                .build();
         return IACScanReportRequest.builder()
                 .validationFilePath(TestUtil.DUMMY_VALIDATE_FILE_PATH)
                 .reportWritePath(ReportConstants.BUILD_SUMMARY_REPORT_PATH)
@@ -77,7 +79,7 @@ public class IACScanReportProcessorTest {
                 .scanEndTime(DUMMY_SCAN_END_TIME)
                 .workspacePath(DUMMY_FILE_PATH)
                 .workspaceContents(new HashMap<>())
-                .violations(violations)
+                .report(report)
                 .build();
     }
 }

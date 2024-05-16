@@ -43,6 +43,7 @@ import io.jenkins.plugins.google.analyze.code.security.model.FileInfo;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.ValidateIACParams;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.ErrorReportRequest;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IACScanReportRequest;
+import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.IaCValidationReport;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Severity;
 import io.jenkins.plugins.google.analyze.code.security.model.IACValidationService.response.Violation;
 import io.jenkins.plugins.google.analyze.code.security.model.PluginConfig;
@@ -175,18 +176,18 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
                     .printf(
                             LogUtils.info("Successfully fetched Scan file at the location : [%s]. Initiating scan"),
                             validatedFilePath);
-            final List<Violation> violations = IACValidationService.getInstance()
+            final IaCValidationReport report = IACValidationService.getInstance()
                     .validateIAC(buildValidateIACParams(credMap.get(orgID), scanFile, scanStartInstant, listener));
             listener.getLogger()
                     .printf(
                             LogUtils.info("Successfully scanned file at the location : [%s], found : [%s] violations"),
                             validatedFilePath,
-                            violations.size());
+                            report.getViolations().size());
             scanEndInstant = Instant.now();
             IACScanReportProcessor.getInstance()
                     .processReport(
                             buildIACScanReportRequest(
-                                    violations,
+                                    report,
                                     workspace,
                                     scanStartInstant,
                                     scanEndInstant,
@@ -198,7 +199,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
                     .printf(
                             LogUtils.info("Successfully published violation summary at : [%s]"),
                             ReportConstants.BUILD_SUMMARY_REPORT_PATH);
-            return determineBuildStatus(violations);
+            return determineBuildStatus(report.getViolations());
         } catch (Exception ex) {
             scanEndInstant = Instant.now();
             listener.getLogger().printf(LogUtils.error("Execution failed with following error : [%s]"), ex);
@@ -386,14 +387,14 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
     }
 
     private IACScanReportRequest buildIACScanReportRequest(
-            final List<Violation> violations,
+            final IaCValidationReport report,
             final FilePath workspacePath,
             final Instant scanStartInstant,
             final Instant scanEndInstant,
             final String validateFilePath,
             final Map<String, String> workspaceContents) {
         return IACScanReportRequest.builder()
-                .violations(violations)
+                .report(report)
                 .workspacePath(workspacePath)
                 .scanEndTime(ReportUtils.getDateFromInstant(scanEndInstant))
                 .scanStartTime(ReportUtils.getDateFromInstant(scanStartInstant))
