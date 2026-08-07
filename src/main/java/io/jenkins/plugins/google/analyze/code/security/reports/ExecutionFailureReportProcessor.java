@@ -24,7 +24,6 @@ import io.jenkins.plugins.google.analyze.code.security.model.PluginConfig;
 import io.jenkins.plugins.google.analyze.code.security.utils.ReportUtils;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * ExecutionFailureReportProcessor processes Execution Failure Report.
@@ -68,8 +67,8 @@ public class ExecutionFailureReportProcessor extends ReportProcessor<ErrorReport
                 HTMLIndent.ZERO, /*key=*/ "Start Time(UTC):", errorReportRequest.getScanStartTime()));
         content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
                 HTMLIndent.ZERO, /*key=*/ "End Time(UTC):", errorReportRequest.getScanEndTime()));
-        content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
-                HTMLIndent.ZERO, /*key=*/ "Plugin Config:", StringUtils.EMPTY));
+        content.add(
+                ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, /*key=*/ "Plugin Config:", ""));
         addConfigParams(errorReportRequest.getPluginConfig(), content);
         content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
                 HTMLIndent.ZERO, /*key=*/ "Error Code:", errorReportRequest.getErrorCode()));
@@ -78,7 +77,7 @@ public class ExecutionFailureReportProcessor extends ReportProcessor<ErrorReport
 
         content.add(ReportConstants.REPORT_CLOSE_HTML);
         content.removeIf(String::isEmpty);
-        return StringUtils.join(content, "\n");
+        return String.join("\n", content);
     }
 
     private void addConfigParams(final PluginConfig pluginConfig, final List<String> content) {
@@ -116,9 +115,7 @@ public class ExecutionFailureReportProcessor extends ReportProcessor<ErrorReport
         }
         violationConfigs.add("]");
         content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
-                HTMLIndent.SINGLE,
-                "Asset Violation " + "Configuration:",
-                StringUtils.join(violationConfigs, /*separator=*/ " ")));
+                HTMLIndent.SINGLE, "Asset Violation " + "Configuration:", String.join(" ", violationConfigs)));
         content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
                 HTMLIndent.SINGLE, /*key=*/ "Ignore Asset " + "Violation:", String.valueOf(false)));
     }

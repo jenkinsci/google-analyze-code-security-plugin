@@ -17,6 +17,7 @@
 package io.jenkins.plugins.google.analyze.code.security.utils;
 
 import hudson.FilePath;
+import hudson.Util;
 import io.jenkins.plugins.google.analyze.code.security.CodeScanBuildStep;
 import io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage;
 import io.jenkins.plugins.google.analyze.code.security.model.FileInfo;
@@ -33,7 +34,6 @@ import java.util.stream.Collectors;
 import lombok.NonNull;
 import org.antlr.v4.runtime.misc.Pair;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Utility class for report generation helper methods.
@@ -55,7 +55,7 @@ public final class FileUtils {
     public static FileInfo loadFileFromWorkspace(
             @NonNull final FilePath root, @NonNull final String fileName, final String filePath)
             throws IOException, InterruptedException {
-        if (!StringUtils.isEmpty(filePath)) {
+        if (Util.fixEmpty(filePath) != null) {
             return FileInfo.builder()
                     .file(IOUtils.toByteArray(
                             root.child(/*relOrAbsolute=*/ filePath + fileName).read()))
@@ -85,7 +85,7 @@ public final class FileUtils {
                 // target file is found return file contents and path root to the file.
                 return FileInfo.builder()
                         .file(IOUtils.toByteArray(path.read()))
-                        .path(StringUtils.join(pathTracker, "/"))
+                        .path(String.join("/", pathTracker))
                         .build();
             }
         }

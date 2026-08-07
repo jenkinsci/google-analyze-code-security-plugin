@@ -29,7 +29,6 @@ import io.jenkins.plugins.google.analyze.code.security.utils.ValidationUtils;
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -115,7 +114,7 @@ public class CredentialPair extends AbstractDescribableImpl<CredentialPair> impl
 
         @NonNull
         public String getDisplayName() {
-            return StringUtils.EMPTY;
+            return "";
         }
     }
 }

@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * IACScanReportProcessor generates and publishes IAC Scan Violation Summary.
@@ -89,7 +88,7 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
                     /*value=*/ iacScanReportRequest.getReport().getNote()));
             content.add(ReportConstants.REPORT_CLOSE_HTML);
             content.removeIf(String::isEmpty);
-            return StringUtils.join(content, /*separator=*/ "\n");
+            return String.join("\n", content);
         }
         content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
                 HTMLIndent.ZERO, /*key=*/ "Summary:", /*value=*/ violations.size() + " issues found"));
@@ -100,7 +99,7 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
                 /*value=*/ iacScanReportRequest.getReport().getNote()));
         content.add(ReportConstants.REPORT_CLOSE_HTML);
         content.removeIf(String::isEmpty);
-        return StringUtils.join(content, /*separator=*/ "\n");
+        return String.join("\n", content);
     }
 
     private void addViolationInfo(final List<Violation> violations, final List<String> content) {
@@ -119,9 +118,7 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
         uniquePoliciesBySeverity.forEach((severity, policies) -> issueCountBySeverity.add(
                 String.format("%s : %s", severity.name(), getViolationCount(policies, violationsPerPolicy))));
         content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
-                HTMLIndent.ZERO,
-                /*key=*/ "Issues by Severity",
-                StringUtils.join(issueCountBySeverity, /*separator=*/ " ")));
+                HTMLIndent.ZERO, /*key=*/ "Issues by Severity", String.join(" ", issueCountBySeverity)));
         extractViolationDetails(content, violationsPerPolicy, uniquePoliciesBySeverity);
     }
 
@@ -130,8 +127,7 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
             final Map<String, List<Violation>> violationsPerPolicy,
             final Map<Severity, Set<String>> uniquePoliciesBySeverity) {
         uniquePoliciesBySeverity.forEach((severity, policies) -> {
-            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(
-                    HTMLIndent.ZERO, severity.name(), StringUtils.EMPTY));
+            content.add(ReportUtils.buildHTMLDivWithKeyAndOptionalValueEntry(HTMLIndent.ZERO, severity.name(), ""));
             policies.forEach((policy) -> {
                 if (violationsPerPolicy.get(policy).isEmpty()) {
                     return;
@@ -186,7 +182,7 @@ public class IACScanReportProcessor extends ReportProcessor<IACScanReportRequest
         content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
                 HTMLIndent.SINGLE,
                 /*key=*/ "Compliance Standards",
-                StringUtils.join(violatedPolicy.getComplianceStandards(), ", ")));
+                String.join(", ", violatedPolicy.getComplianceStandards())));
         content.add(ReportUtils.buildHTMLDivWithKeyValueEntry(
                 HTMLIndent.SINGLE, /*key=*/ "Description", violatedPolicy.getDescription()));
     }
