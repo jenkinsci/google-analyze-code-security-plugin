@@ -19,11 +19,11 @@ package io.jenkins.plugins.google.analyze.code.security.accessor;
 import static io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage.INVALID_REQUEST;
 import static io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage.INVALID_SCAN_FILE_SIZE;
 import static io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage.MALFORMED_SCAN_FILE;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
+import hudson.Util;
 import hudson.model.BuildListener;
 import hudson.util.Secret;
 import io.jenkins.plugins.google.analyze.code.security.client.HttpClient;
@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.NonNull;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -109,7 +108,7 @@ public class IACValidationService {
                 validateIACParams.getFile(),
                 validateIACParams.getOrgID(),
                 validateIACParams.getCredentials().getPlainText());
-        final String url = StringUtils.replace(VALIDATE_URL, ORG_ID_PLACEHOLDER, validateIACParams.getOrgID());
+        final String url = VALIDATE_URL.replace(ORG_ID_PLACEHOLDER, validateIACParams.getOrgID());
         try (CloseableHttpClient closeableHttpClient =
                 httpClient.getHttpClientBuilder(/* maxRetryCount= */ 3).build()) {
             final String jsonReq =
@@ -122,7 +121,7 @@ public class IACValidationService {
             printStream.printf(LogUtils.info("Requesting Validation Service Polling Endpoint from : %s"), url);
             String resJSON = closeableHttpClient.execute(httppost, this::handleIACValidationResponse);
             Response response = mapper.readValue(resJSON, Response.class);
-            if (response == null || isBlank(response.getName())) {
+            if (response == null || Util.fixEmptyAndTrim(response.getName()) == null) {
                 throw new IACValidationException(
                         /* statusCode= */ 500,
                         "[Internal Error] Received Invalid Response "
@@ -159,7 +158,7 @@ public class IACValidationService {
         final byte[] file = ReportConstants.DUMMY_INVALID_IAC_FILE.getBytes(StandardCharsets.UTF_8);
         validateIACValidationRequest(file, orgID, credential.getPlainText());
         final Request request = buildRequest(file, orgID);
-        final String url = StringUtils.replace(VALIDATE_URL, ORG_ID_PLACEHOLDER, request.getParent());
+        final String url = VALIDATE_URL.replace(ORG_ID_PLACEHOLDER, request.getParent());
         try (CloseableHttpClient closeableHttpClient =
                 httpClient.getHttpClientBuilder(/*maxRetryCount=*/ 1).build()) {
             final String jsonReq = mapper.writeValueAsString(request);

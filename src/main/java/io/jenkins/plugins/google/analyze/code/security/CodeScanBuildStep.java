@@ -16,12 +16,11 @@
 
 package io.jenkins.plugins.google.analyze.code.security;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import com.google.common.annotations.VisibleForTesting;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -70,7 +69,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -356,7 +354,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
         @POST
         public FormValidation doCheckScanFileName(@QueryParameter String scanFileName, @AncestorInPath Item item) {
             ValidationUtils.checkPermissions(item);
-            if (isBlank(scanFileName)) {
+            if (Util.fixEmptyAndTrim(scanFileName) == null) {
                 return FormValidation.error(CustomerMessage.INVALID_SCAN_FILE_NAME);
             }
             return FormValidation.ok();
@@ -530,7 +528,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
         if (!ValidationUtils.isValidOrgId(orgID)) {
             errors.add(CustomerMessage.INVALID_ORG_ID);
         }
-        if (isBlank(scanFileName)) {
+        if (Util.fixEmptyAndTrim(scanFileName) == null) {
             errors.add(CustomerMessage.INVALID_SCAN_FILE_NAME);
         }
         if (!ValidationUtils.isValidScanTimeOut(scanTimeOut)) {
@@ -543,7 +541,7 @@ public class CodeScanBuildStep extends Builder implements SimpleBuildStep {
         }
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException(
-                    String.format(CustomerMessage.INVALID_CONFIG, StringUtils.join(errors, ", ")));
+                    String.format(CustomerMessage.INVALID_CONFIG, String.join(", ", errors)));
         }
     }
 

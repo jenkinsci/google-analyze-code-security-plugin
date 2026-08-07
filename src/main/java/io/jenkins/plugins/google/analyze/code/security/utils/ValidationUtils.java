@@ -16,9 +16,8 @@
 
 package io.jenkins.plugins.google.analyze.code.security.utils;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hudson.Util;
 import hudson.model.Item;
 import io.jenkins.plugins.google.analyze.code.security.commons.Config;
 import io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import jenkins.model.Jenkins;
 import lombok.NonNull;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * ValidationUtils provides validation helper methods.
@@ -69,7 +67,7 @@ public final class ValidationUtils {
      * Validates if an orgID is valid.
      */
     public static boolean isValidOrgId(final String orgID) {
-        return !isBlank(orgID) && orgID.matches("[0-9]+");
+        return Util.fixEmptyAndTrim(orgID) != null && orgID.matches("[0-9]+");
     }
 
     /**
@@ -127,7 +125,7 @@ public final class ValidationUtils {
                     .isValid(false)
                     .errors(List.of(String.format(
                             CustomerMessage.INVALID_SEVERITY_CONFIG,
-                            StringUtils.join(duplicateConfigs, /*separator=*/ ','))))
+                            String.join(String.valueOf(','), duplicateConfigs))))
                     .build();
         }
         return ValidationResponse.builder().isValid(true).build();

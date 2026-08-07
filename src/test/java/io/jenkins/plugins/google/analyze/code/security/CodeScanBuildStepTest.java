@@ -25,7 +25,6 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.util.Secret;
-import io.jenkins.cli.shaded.org.apache.commons.lang.StringUtils;
 import io.jenkins.plugins.google.analyze.code.security.commons.Config;
 import io.jenkins.plugins.google.analyze.code.security.commons.CustomerMessage;
 import io.jenkins.plugins.google.analyze.code.security.model.ConfigAggregator;
@@ -219,7 +218,7 @@ public class CodeScanBuildStepTest {
         FreeStyleProject p = jenkinsRule.createFreeStyleProject();
         final CodeScanBuildStep codeScanBuildStep = new CodeScanBuildStep(
                 DUMMY_INVALID_ORG_ID,
-                StringUtils.EMPTY,
+                "",
                 /*filePath=*/ null,
                 (Config.SCAN_TIMEOUT_MIN - 10),
                 FAIL_SILENTLY_ON_PLUGIN_FAILURE_FALSE,

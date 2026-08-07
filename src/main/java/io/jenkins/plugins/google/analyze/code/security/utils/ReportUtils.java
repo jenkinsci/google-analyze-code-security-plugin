@@ -16,8 +16,7 @@
 
 package io.jenkins.plugins.google.analyze.code.security.utils;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
+import hudson.Util;
 import io.jenkins.plugins.google.analyze.code.security.commons.ReportConstants;
 import io.jenkins.plugins.google.analyze.code.security.model.HTMLIndent;
 import java.time.Instant;
@@ -26,7 +25,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * ReportUtils provides utility methods for building report.
@@ -50,19 +48,19 @@ public final class ReportUtils {
      */
     public static String buildHTMLDivWithKeyAndOptionalValueEntry(
             final HTMLIndent indent, final String key, final String value) {
-        if (isBlank(key)) {
-            return StringUtils.EMPTY;
+        if (Util.fixEmptyAndTrim(key) == null) {
+            return "";
         }
         List<String> content = new ArrayList<>();
         content.add(ReportConstants.INDENT_CLASS_DIV.replace(
                 "$INDENT_LEVEL_PLACEHOLDER$", indent.getIndent().toString()));
         content.add(ReportConstants.KEY_CLASS_DIV.replace(/*target=*/ "$KEY_PLACEHOLDER$", key));
 
-        if (!isBlank(value)) {
+        if (Util.fixEmptyAndTrim(value) != null) {
             content.add(ReportConstants.VALUE_CLASS_DIV.replace(/*target=*/ "$VALUE_PLACEHOLDER$", value));
         }
         content.add(ReportConstants.DIV_CLOSE);
-        return StringUtils.join(content, /*separator=*/ "\n");
+        return String.join("\n", content);
     }
 
     /**
@@ -79,8 +77,8 @@ public final class ReportUtils {
      * @param value value attribute in the div.
      */
     public static String buildHTMLDivWithKeyValueEntry(final HTMLIndent indent, final String key, final String value) {
-        if (isBlank(value)) {
-            return StringUtils.EMPTY;
+        if (Util.fixEmptyAndTrim(value) == null) {
+            return "";
         }
         return buildHTMLDivWithKeyAndOptionalValueEntry(indent, key, value);
     }
